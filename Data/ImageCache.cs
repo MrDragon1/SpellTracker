@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-
+using SpellTracker.Control;
 #nullable enable
 
 namespace SpellTracker.Data
@@ -64,7 +64,7 @@ namespace SpellTracker.Data
                 Dicc[url] = img = (RawToBitmapImage(data), null, data);
             }
 
-            Debug.WriteLine($"Time: {sw.Elapsed} {url}");
+            Log.debug($"Time: {sw.Elapsed} {url}");
             return img.Normal;
         }
 

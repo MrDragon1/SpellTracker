@@ -1,0 +1,270 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
+using System.Security.Policy;
+using System.IO;
+using System.Net;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SpellTracker.Data;
+using System.Diagnostics;
+using System.Windows.Media;
+using System.Timers;
+using System.Windows;
+namespace SpellTracker.Control
+{
+    class RiotParse
+    {
+        public int GameTime;
+        public string GameMode, PlayerName;
+        public List<int> level = new List<int>();
+        public List<string> summonerName = new List<string>();
+        public List<string> championName = new List<string>();
+        public string[] summonerSpell = new string[10];
+        public FadeImage[] SpellImg = new FadeImage[10];
+        public int[] SpellTime = new int[10];
+        public int shift = 10;
+        public string playerteam = "";
+        public bool IsSync = false;
+        public Timer timer = new Timer(1000);
+        private string typestr = "";
+        public string TypeStr { 
+            get { return typestr; } 
+        }
+
+        public RiotParse()
+        {
+            //验证服务器证书回调自动验证
+            System.Net.ServicePointManager.ServerCertificateValidationCallback =
+                         new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
+            timer.Elapsed += new System.Timers.ElapsedEventHandler(timeout); //到达时间的时候执行事件；   
+            timer.AutoReset = true;   //设置是执行一次（false）还是一直执行(true)；   
+            timer.Enabled = true;     //是否执行System.Timers.Timer.Elapsed事件；
+            reset();
+        }
+
+        private void reset()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                SpellTime[i] = 0;
+            }
+            level.Clear();
+            summonerName.Clear();
+            championName.Clear();
+        }
+
+        protected bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        {   // 总是接受  
+            return true;
+        }
+
+        public void timeout(object source, System.Timers.ElapsedEventArgs e)
+        {
+            if (Process.GetProcessesByName("League of legends").Length == 0)
+            {
+                timer.Stop();
+                IsSync = false;
+                reset();
+                return;
+            }
+
+            GameTime++;
+            bool IfType = false;
+            if (GameTime % 10 == 0) IfType = true;
+            for (int i = 0; i < 10; i++)
+            {
+                if (SpellTime[i] == 1)
+                {
+                    IfType = true;
+                    SpellImg[i].Source = (ImageSource)Application.Current.FindResource("img/" + summonerSpell[i] + ".png");
+                }
+                if (SpellTime[i] > 0) SpellTime[i]--;  
+            }
+            if (IfType) Type();
+
+            //TODO: update img as time goes 
+        }
+
+        public async Task TicTok(int id)
+        {
+            Log.Info("click " + id.ToString() + "  " + summonerSpell[id]);
+            if (SpellTime[id] == 0)
+            {
+                SpellTime[id] = GetSpellCD(id);
+                SpellImg[id].Source = await ImageCache.Instance.Get("img/CD" + summonerSpell[id] + ".png");
+                //(ImageSource)Application.Current.FindResource("img/CD" + summonerSpell[id] + ".png");
+            }
+            else
+            {
+                SpellTime[id] = 0;
+                SpellImg[id].Source = await ImageCache.Instance.Get("img/" + summonerSpell[id] + ".png");
+            }
+            
+        }
+
+        private string GetSpellShortName(string str)
+        {
+            if (str == "SummonerFlash") return ("");
+            else if (str == "SummonerTeleport") return ("tp");
+            else if (str == "SummonerDot") return ("dr");
+            else if (str == "SummonerSmite") return ("cj");
+            else if (str == "SummonerBarrier") return ("pz");
+            else if (str == "SummonerBoost") return ("jh");
+            else if (str == "SummonerExhaust") return ("xr");
+            else if (str == "SummonerHaste") return ("jp");
+            else if (str == "SummonerHeal") return ("zl");
+            else if (str == "SummonerMana") return ("qxs");
+            return ("");
+        }
+
+        private string Get_UrlData(string url)
+        {
+            try
+            {
+                string result = "";
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(new Uri(url));
+                HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+                Stream stream = resp.GetResponseStream();
+                try
+                {
+                    //获取内容
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        result = reader.ReadToEnd();
+                    }
+                }
+                finally
+                {
+                    stream.Close();
+                }
+                return result;
+            }
+            catch
+            {
+                Log.error("wrong url : " + url );
+                return "";
+            }
+        }
+
+        public async Task Parse()
+        {
+            if (Process.GetProcessesByName("League of legends").Length == 0)
+            {
+                //return;
+            }
+            string Url = "https://127.0.0.1:2999/liveclientdata/gamestats";
+            RootObject_Gamestats gamestats = JsonConvert.DeserializeObject<RootObject_Gamestats>(Get_UrlData(Url));
+            GameTime = (int)Convert.ToSingle(gamestats.gameTime);
+            GameMode = gamestats.gameMode;
+
+            Url = "https://127.0.0.1:2999/liveclientdata/activeplayername";
+            PlayerName = Get_UrlData(Url).Replace("\"", "");
+
+            Url = "https://127.0.0.1:2999/liveclientdata/playerlist";
+            string result = "{\n\"Player\": " + Get_UrlData(Url) + "\n}";
+            RootObject_Playerlist playerlist = JsonConvert.DeserializeObject<RootObject_Playerlist>(result);
+            foreach (Player p in playerlist.Player)
+            {
+                if (p.summonerName == PlayerName)
+                {
+                    playerteam = p.team;
+                    break;
+                }
+            }
+            level.Clear();
+            summonerName.Clear();
+            championName.Clear();
+            int index = 0;
+            foreach (Player p in playerlist.Player)
+            {
+                if (p.team != playerteam)
+                {
+                    level.Add((int)Convert.ToSingle(p.level));
+                    summonerName.Add(p.summonerName);
+                    summonerSpell[index++] = p.summonerSpells.summonerSpellOne.rawDisplayName.Split('_')[2];
+                    summonerSpell[index++] = p.summonerSpells.summonerSpellTwo.rawDisplayName.Split('_')[2];
+                    championName.Add(p.championName);
+                }
+            }
+            await LoadPic();
+            timer.Start();
+            IsSync = true;
+        }
+
+        private async Task LoadPic()     
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                SpellImg[i].Source = await ImageCache.Instance.Get("img/" + summonerSpell[i] + ".png");
+            }
+        }
+
+        public void Type()
+        {
+            if (IsSync == false) return;
+            //Thread.Sleep(2000);
+            string str = "";
+            if (SpellTime[0] > 0) str += ("TOP") + GetSpellShortName(summonerSpell[0]) + GetTimeInMinute(GameTime + SpellTime[0]) + (" ");
+            if (SpellTime[1] > 0) str += ("TOP") + GetSpellShortName(summonerSpell[1]) + GetTimeInMinute(GameTime + SpellTime[1]) + (" ");
+            if (SpellTime[2] > 0) str += ("JUG") + GetSpellShortName(summonerSpell[2]) + GetTimeInMinute(GameTime + SpellTime[2]) + (" ");
+            if (SpellTime[3] > 0) str += ("JUG") + GetSpellShortName(summonerSpell[3]) + GetTimeInMinute(GameTime + SpellTime[3]) + (" ");
+            if (SpellTime[4] > 0) str += ("MID") + GetSpellShortName(summonerSpell[4]) + GetTimeInMinute(GameTime + SpellTime[4]) + (" ");
+            if (SpellTime[5] > 0) str += ("MID") + GetSpellShortName(summonerSpell[5]) + GetTimeInMinute(GameTime + SpellTime[5]) + (" ");
+            if (SpellTime[6] > 0) str += ("AD") + GetSpellShortName(summonerSpell[6]) + GetTimeInMinute(GameTime + SpellTime[6]) + (" ");
+            if (SpellTime[7] > 0) str += ("AD") + GetSpellShortName(summonerSpell[7]) + GetTimeInMinute(GameTime + SpellTime[7]) + (" ");
+            if (SpellTime[8] > 0) str += ("SUP") + GetSpellShortName(summonerSpell[8]) + GetTimeInMinute(GameTime + SpellTime[8]) + (" ");
+            if (SpellTime[9] > 0) str += ("SUP") + GetSpellShortName(summonerSpell[9]) + GetTimeInMinute(GameTime + SpellTime[9]) + (" ");
+
+            typestr = str;
+        }
+
+        //返回按分秒显示的冷却时间
+        private string GetTimeInMinute(int time)
+        {
+            time -= time % 5;
+            int minute = time / 60;
+            int second = time % 60;
+            string t = "";
+            if (minute < 10) t = "0";
+            t += minute.ToString() + ":";
+            if (second < 10) t += "0";
+            t += second.ToString();
+            return t;
+        }
+
+        private int GetSpellCD(int id)
+        {
+            string str = summonerSpell[id];
+            if (str == "SummonerFlash") return 300 - shift;
+            else if (str == "SummonerDot") return 180 - shift;
+            else if (str == "SummonerSmite") return 15 - shift;
+            else if (str == "SummonerBarrier") return 180 - shift;
+            else if (str == "SummonerBoost") return 210 - shift;
+            else if (str == "SummonerExhaust") return 210 - shift;
+            else if (str == "SummonerHaste") return 210 - shift;
+            else if (str == "SummonerHeal") return 240 - shift;
+            else if (str == "SummonerMana") return 240 - shift;
+            else if (str == "SummonerTeleport")
+            {
+                string Url = "https://127.0.0.1:2999/liveclientdata/playerlist";
+                string result = "{\n\"Player\": " + Get_UrlData(Url) + "\n}";
+                RootObject_Playerlist playerlist = JsonConvert.DeserializeObject<RootObject_Playerlist>(result);
+                level.Clear();
+                foreach (Player p in playerlist.Player)
+                {
+                    if (p.team != playerteam)
+                    {
+                        level.Add((int)Convert.ToSingle(p.level));
+                    }
+                }
+                return 420 - 10 * level[id / 2] - shift;
+            }
+            return 0;
+        }
+    }
+}

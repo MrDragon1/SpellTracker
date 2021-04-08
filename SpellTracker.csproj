@@ -83,6 +83,8 @@
     <Compile Include="Control\FadeImage.xaml.cs" />
     <Compile Include="Control\KeyBoardHook.cs" />
     <Compile Include="Control\LogHelper.cs" />
+    <Compile Include="Control\RiotParse.cs" />
+    <Compile Include="Control\SummonerInfo.cs" />
     <Compile Include="Control\Win32Helper.cs" />
     <Compile Include="Data\ImageCache.cs" />
     <Compile Include="MainWindow.xaml.cs">
