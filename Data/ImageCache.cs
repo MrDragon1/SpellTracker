@@ -53,10 +53,10 @@ namespace SpellTracker.Data
                 {
                     data = File.ReadAllBytes(file);
                     Dicc[url + "_" + percent.ToString()] = img = (RawToBitmapImage(data), data);
+                    Log.Info($"Time: {sw.Elapsed} {url} percent: {percent}% Hit");
                 }
                 else
                 {
-
                     if(percent == 100)
                     {
                         data = await new WebClient().DownloadDataTaskAsync(url);
@@ -65,17 +65,15 @@ namespace SpellTracker.Data
                     else if (percent == 0)
                     {
                         var bm = await GetGrayscale(url);
-                        bm.Save(@".\\test.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
                         MemoryStream ms = new MemoryStream();
                         bm.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-                        data = ms.GetBuffer();  //byte[]   bytes=   ms.ToArray(); 这两句都可以，至于区别么，下面有解释
+                        data = ms.GetBuffer();
                         ms.Close();
                         Dicc[url + "_" + percent.ToString()] = img = (BitmapUtils.Bitmap2BitmapSource(bm), data);
                     }
                     else
                     {
                         var bm = await GetpercentCDImg(url, percent);
-                        bm.Save(@".\\test.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
                         MemoryStream ms = new MemoryStream();
                         bm.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
                         data = ms.GetBuffer();
@@ -88,10 +86,11 @@ namespace SpellTracker.Data
                         Directory.CreateDirectory(CachePath);
                         File.WriteAllBytes(file, data);
                     }
+                    Log.Info($"Time: {sw.Elapsed} {url} percent: {percent}% Loaded");
                 }
 
             }
-            Log.debug($"Time: {sw.Elapsed} {url} percent: {percent}%");
+            
             return img.Normal;
         }
 
@@ -101,7 +100,7 @@ namespace SpellTracker.Data
                 await Get(url);
             var (n, d) = Dicc[url + "_100"];
 
-            var fullimg = BitmapUtils.ToBitmap(d);
+            var fullimg = BitmapUtils.SetBrightness(BitmapUtils.ToBitmap(d),0.5);
             var cdimg = BitmapUtils.Grayscale(BitmapUtils.ToBitmap(d));
 
             var width = fullimg.Width;

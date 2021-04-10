@@ -38,8 +38,6 @@ namespace SpellTracker.Control
         public SummonerSpell[] spells;
         private readonly IDictionary<string, SummonerSpell > Dic = new ConcurrentDictionary<string, SummonerSpell>();
 
-        public System.Timers.Timer timer = new System.Timers.Timer(3000);
-
         private string typestr = "";
         public string TypeStr { 
             get { return typestr; } 
@@ -50,9 +48,6 @@ namespace SpellTracker.Control
             //验证服务器证书回调自动验证
             System.Net.ServicePointManager.ServerCertificateValidationCallback =
                          new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
-            timer.Elapsed += new System.Timers.ElapsedEventHandler(Timeout); //到达时间的时候执行事件；   
-            timer.AutoReset = true;   //设置是执行一次（false）还是一直执行(true)；   
-            timer.Enabled = true;     //是否执行System.Timers.Timer.Elapsed事件
             Reset();
         }
 
@@ -70,6 +65,7 @@ namespace SpellTracker.Control
             for (int i = 0; i < 10; i++)
             {
                 SpellTime[i] = 0;
+                summonerSpell[i] = "SummonerFlash";
             }
             level.Clear();
             summonerName.Clear();
@@ -81,39 +77,35 @@ namespace SpellTracker.Control
             return true;
         }
 
-        public void Timeout(object source, System.Timers.ElapsedEventArgs e)
-        {
-            //global::SpellTracker.MainWindow.Dispatcher.Invoke(new Action(async delegate
-            //{
-            //    await Update();
-            //}));
-        }
-
         public async Task Update()
         {
-            //if(Process.GetProcessesByName("League of legends").Length == 0)
-            //{
-            //    timer.Stop();
-            //    IsSync = false;
-            //    Reset();
-            //    return;
-            //}
+            if (!IsSync) return;
+#if !DEBUG
+            if (Process.GetProcessesByName("League of legends").Length == 0)
+                        {
+                            timer.Stop();
+                            IsSync = false;
+                            Reset();
+                            return;
+                        }
+#endif
             GameTime++;
             bool IfType = false;
             if (GameTime % 10 == 0) IfType = true;
-            Console.WriteLine(SpellTime[5].ToString());
             for (int i = 0; i < 10; i++)
             {
                 
                 if (SpellTime[i] == 1)
                 {
                     IfType = true;
-                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, 0);
+                    SpellImg[i].IfFade = true;
+                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL);
                 }
                 else if (SpellTime[i] > 0)
                 {
+                    SpellImg[i].IfFade = false;
                     //Console.WriteLine("spelltime = " + SpellTime[i].ToString() + " SummonerCD =: " + Dic[summonerSpell[i]].SummonerCD.ToString() + " percent= " + (SpellTime[i] * 100 / Dic[summonerSpell[i]].SummonerCD).ToString());
-                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, 100 - SpellTime[i] * 100 / Dic[summonerSpell[i]].SummonerCD);
+                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, (Dic[summonerSpell[i]].SummonerCD - SpellTime[i]) * 100 / Dic[summonerSpell[i]].SummonerCD);
                 }
                 if (SpellTime[i] > 0) SpellTime[i]--;
             }
@@ -122,17 +114,25 @@ namespace SpellTracker.Control
 
         public async Task TicTok(int id)
         {
-            Log.Info("click " + id.ToString() + "  " + summonerSpell[id]);
-            if (SpellTime[id] == 0)
+            
+            if (IsSync)
             {
-                SpellTime[id] = GetSpellCD(id);
-                SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL,0);
-                //(ImageSource)Application.Current.FindResource("img/CD" + summonerSpell[id] + ".png");
+                Log.Info("click " + id.ToString() + "  " + summonerSpell[id]);
+                if (SpellTime[id] == 0)
+                {
+                    SpellTime[id] = GetSpellCD(id);
+                    SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL, 0);
+                    //(ImageSource)Application.Current.FindResource("img/CD" + summonerSpell[id] + ".png");
+                }
+                else
+                {
+                    SpellTime[id] = 0;
+                    SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL);
+                }
             }
             else
             {
-                SpellTime[id] = 0;
-                SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL);
+                Log.error("Invalid click on " + id.ToString() + "  " + summonerSpell[id]);
             }
             
         }
@@ -183,14 +183,8 @@ namespace SpellTracker.Control
 
         public async Task Parse()
         {
-            if (Process.GetProcessesByName("League of legends").Length == 0)
-            {
-                timer.Stop();
-                //return;
-            }
 
 #if DEBUG
-            
             string Url = "./gamestats.json";
             RootObject_Gamestats gamestats = JsonConvert.DeserializeObject<RootObject_Gamestats>(System.IO.File.ReadAllText(Url));//Get_UrlData(Url)
             GameTime = (int)Convert.ToSingle(gamestats.gameTime);
@@ -203,6 +197,13 @@ namespace SpellTracker.Control
             string result = "{\n\"Player\": " + System.IO.File.ReadAllText(Url) + "\n}";
             RootObject_Playerlist playerlist = JsonConvert.DeserializeObject<RootObject_Playerlist>(result);
 #else
+            if (Process.GetProcessesByName("League of legends").Length == 0)
+            {
+                IsSync = false;
+                Log.error("Can not find League of legends.exe! Please make sure you have run the game.");
+                return;
+            }
+
             string Url = "https://127.0.0.1:2999/liveclientdata/gamestats";
             RootObject_Gamestats gamestats = JsonConvert.DeserializeObject<RootObject_Gamestats>(Get_UrlData(Url));//Get_UrlData(Url)
             GameTime = (int)Convert.ToSingle(gamestats.gameTime);
@@ -241,7 +242,6 @@ namespace SpellTracker.Control
             }
             await LoadPic();
             IsSync = true;
-            //timer.Start();
             }
 
         private async Task LoadPic()     

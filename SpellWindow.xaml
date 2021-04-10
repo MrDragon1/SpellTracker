@@ -1,0 +1,56 @@
+﻿<Window x:Class="SpellTracker.SpellWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpellTracker"
+        mc:Ignorable="d"
+        Title="SpellWindow" Height="450" Width="800" Loaded="Main_Load"
+    xmlns:controls="clr-namespace:SpellTracker.Control"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+         TextElement.FontWeight="Regular"
+         TextElement.FontSize="13"
+         TextOptions.TextFormattingMode="Ideal"
+         TextOptions.TextRenderingMode="Auto"
+         Background="{DynamicResource MaterialDesignPaper}"
+         FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <Grid Margin="10,10,-8,0">
+        <WrapPanel Margin="83,75,99,115">
+            <controls:FadeImage x:Name="SpellImage00"
+                                    MouseLeftButtonDown="SpellImage00_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage00_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+            <controls:FadeImage x:Name="SpellImage10"
+                                    MouseLeftButtonDown="SpellImage10_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage10_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+            <controls:FadeImage x:Name="SpellImage20"
+                                    MouseLeftButtonDown="SpellImage20_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage20_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+            <controls:FadeImage x:Name="SpellImage30"
+                                    MouseLeftButtonDown="SpellImage30_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage30_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+            <controls:FadeImage x:Name="SpellImage40"
+                                    MouseLeftButtonDown="SpellImage40_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage40_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+
+
+            <controls:FadeImage x:Name="SpellImage01"
+                                    MouseLeftButtonDown="SpellImage01_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage01_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+            <controls:FadeImage x:Name="SpellImage11"
+                                    MouseLeftButtonDown="SpellImage11_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage11_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+            <controls:FadeImage x:Name="SpellImage21"
+                                    MouseLeftButtonDown="SpellImage21_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage21_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+            <controls:FadeImage x:Name="SpellImage31"
+                                    MouseLeftButtonDown="SpellImage31_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage31_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+            <controls:FadeImage x:Name="SpellImage41"
+                                    MouseLeftButtonDown="SpellImage41_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="SpellImage41_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
+
+        </WrapPanel>
+    </Grid>
+</Window>

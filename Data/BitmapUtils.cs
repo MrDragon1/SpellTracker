@@ -53,6 +53,14 @@ namespace SpellTracker.Data
             });
         }
 
+        public static Bitmap SetBrightness(Bitmap original,double scale)
+        {
+            return Filter(original, (r, g, b, a) =>
+            {
+                return ((byte)(r * scale), (byte)(g * scale), (byte)(b * scale));
+            });
+        }
+
         public static BitmapSource Bitmap2BitmapSource(Bitmap bitmap)
         {
             IntPtr hBitmap = bitmap.GetHbitmap();

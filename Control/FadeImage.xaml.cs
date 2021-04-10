@@ -17,6 +17,8 @@ namespace SpellTracker.Control
         }
         public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(ImageSource), typeof(FadeImage), new PropertyMetadata(SourceChanged));
 
+        public bool IfFade = true;
+
         public Stretch Stretch
         {
             get { return (Stretch)GetValue(StretchProperty); }
@@ -69,8 +71,11 @@ namespace SpellTracker.Control
             FadeOut.SpeedRatio = SpeedRatio;
             FadeIn.SpeedRatio = SpeedRatio;
 
-            FadeOut.Begin(ImgA);
-            FadeIn.Begin(ImgB);
+            if(IfFade)
+            {
+                FadeOut.Begin(ImgA);
+                FadeIn.Begin(ImgB);
+            }
 
             var a = ImgA;
             ImgA = ImgB;
