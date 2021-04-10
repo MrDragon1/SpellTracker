@@ -25,10 +25,10 @@ namespace SpellTracker.Control
         //OFF 最高等级的，用于关闭所有日志记录。
         //如果将log level设置在某一个级别上，那么比此级别优先级高的log都能打印出来。例如，如果设置优先级为WARN，那么OFF、FATAL、ERROR、WARN 4个级别的log能正常输出，而INFO、DEBUG、TRACE、 ALL级别的log则会被忽略。Log4j建议只使用四个级别，优先级从高到低分别是ERROR、WARN、INFO、DEBUG。
 
+        
         #region DEBUG 指出细粒度信息事件对调试应用程序是非常有帮助的，主要用于开发过程中打印一些运行信息。 
         public static void debug(string write)
         {
-
             log.Debug("  " + write);
         }
         public static void debug(string write, Exception ex)

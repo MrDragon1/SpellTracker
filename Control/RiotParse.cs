@@ -15,6 +15,10 @@ using System.Diagnostics;
 using System.Windows.Media;
 using System.Timers;
 using System.Windows;
+using SpellTracker.Control;
+using System.Threading;
+using System.Collections.Concurrent;
+
 namespace SpellTracker.Control
 {
     class RiotParse
@@ -30,7 +34,12 @@ namespace SpellTracker.Control
         public int shift = 10;
         public string playerteam = "";
         public bool IsSync = false;
-        public Timer timer = new Timer(1000);
+
+        public SummonerSpell[] spells;
+        private readonly IDictionary<string, SummonerSpell > Dic = new ConcurrentDictionary<string, SummonerSpell>();
+
+        public System.Timers.Timer timer = new System.Timers.Timer(3000);
+
         private string typestr = "";
         public string TypeStr { 
             get { return typestr; } 
@@ -41,13 +50,22 @@ namespace SpellTracker.Control
             //验证服务器证书回调自动验证
             System.Net.ServicePointManager.ServerCertificateValidationCallback =
                          new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
-            timer.Elapsed += new System.Timers.ElapsedEventHandler(timeout); //到达时间的时候执行事件；   
+            timer.Elapsed += new System.Timers.ElapsedEventHandler(Timeout); //到达时间的时候执行事件；   
             timer.AutoReset = true;   //设置是执行一次（false）还是一直执行(true)；   
-            timer.Enabled = true;     //是否执行System.Timers.Timer.Elapsed事件；
-            reset();
+            timer.Enabled = true;     //是否执行System.Timers.Timer.Elapsed事件
+            Reset();
         }
 
-        private void reset()
+        public async Task GetSpells()
+        {
+            this.spells = await Riot.GetSummonerSpellsAsync();
+            foreach(SummonerSpell p in spells)
+            {
+                Dic[p.Key] = p;
+            }
+        }
+
+        private void Reset()
         {
             for (int i = 0; i < 10; i++)
             {
@@ -63,31 +81,43 @@ namespace SpellTracker.Control
             return true;
         }
 
-        public void timeout(object source, System.Timers.ElapsedEventArgs e)
+        public void Timeout(object source, System.Timers.ElapsedEventArgs e)
         {
-            if (Process.GetProcessesByName("League of legends").Length == 0)
-            {
-                timer.Stop();
-                IsSync = false;
-                reset();
-                return;
-            }
+            //global::SpellTracker.MainWindow.Dispatcher.Invoke(new Action(async delegate
+            //{
+            //    await Update();
+            //}));
+        }
 
+        public async Task Update()
+        {
+            //if(Process.GetProcessesByName("League of legends").Length == 0)
+            //{
+            //    timer.Stop();
+            //    IsSync = false;
+            //    Reset();
+            //    return;
+            //}
             GameTime++;
             bool IfType = false;
             if (GameTime % 10 == 0) IfType = true;
+            Console.WriteLine(SpellTime[5].ToString());
             for (int i = 0; i < 10; i++)
             {
+                
                 if (SpellTime[i] == 1)
                 {
                     IfType = true;
-                    SpellImg[i].Source = (ImageSource)Application.Current.FindResource("img/" + summonerSpell[i] + ".png");
+                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, 0);
                 }
-                if (SpellTime[i] > 0) SpellTime[i]--;  
+                else if (SpellTime[i] > 0)
+                {
+                    //Console.WriteLine("spelltime = " + SpellTime[i].ToString() + " SummonerCD =: " + Dic[summonerSpell[i]].SummonerCD.ToString() + " percent= " + (SpellTime[i] * 100 / Dic[summonerSpell[i]].SummonerCD).ToString());
+                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, 100 - SpellTime[i] * 100 / Dic[summonerSpell[i]].SummonerCD);
+                }
+                if (SpellTime[i] > 0) SpellTime[i]--;
             }
             if (IfType) Type();
-
-            //TODO: update img as time goes 
         }
 
         public async Task TicTok(int id)
@@ -96,13 +126,13 @@ namespace SpellTracker.Control
             if (SpellTime[id] == 0)
             {
                 SpellTime[id] = GetSpellCD(id);
-                SpellImg[id].Source = await ImageCache.Instance.Get("img/CD" + summonerSpell[id] + ".png");
+                SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL,0);
                 //(ImageSource)Application.Current.FindResource("img/CD" + summonerSpell[id] + ".png");
             }
             else
             {
                 SpellTime[id] = 0;
-                SpellImg[id].Source = await ImageCache.Instance.Get("img/" + summonerSpell[id] + ".png");
+                SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL);
             }
             
         }
@@ -155,19 +185,37 @@ namespace SpellTracker.Control
         {
             if (Process.GetProcessesByName("League of legends").Length == 0)
             {
+                timer.Stop();
                 //return;
             }
+
+#if DEBUG
+            
+            string Url = "./gamestats.json";
+            RootObject_Gamestats gamestats = JsonConvert.DeserializeObject<RootObject_Gamestats>(System.IO.File.ReadAllText(Url));//Get_UrlData(Url)
+            GameTime = (int)Convert.ToSingle(gamestats.gameTime);
+            GameMode = gamestats.gameMode;
+
+            Url = "./activeplayername.json";
+            PlayerName = System.IO.File.ReadAllText(Url).Replace("\"", "");
+
+            Url = "./playerlist.json";
+            string result = "{\n\"Player\": " + System.IO.File.ReadAllText(Url) + "\n}";
+            RootObject_Playerlist playerlist = JsonConvert.DeserializeObject<RootObject_Playerlist>(result);
+#else
             string Url = "https://127.0.0.1:2999/liveclientdata/gamestats";
-            RootObject_Gamestats gamestats = JsonConvert.DeserializeObject<RootObject_Gamestats>(Get_UrlData(Url));
+            RootObject_Gamestats gamestats = JsonConvert.DeserializeObject<RootObject_Gamestats>(Get_UrlData(Url));//Get_UrlData(Url)
             GameTime = (int)Convert.ToSingle(gamestats.gameTime);
             GameMode = gamestats.gameMode;
 
             Url = "https://127.0.0.1:2999/liveclientdata/activeplayername";
-            PlayerName = Get_UrlData(Url).Replace("\"", "");
 
+            PlayerName = Get_UrlData(Url).Replace("\"", "");
             Url = "https://127.0.0.1:2999/liveclientdata/playerlist";
             string result = "{\n\"Player\": " + Get_UrlData(Url) + "\n}";
             RootObject_Playerlist playerlist = JsonConvert.DeserializeObject<RootObject_Playerlist>(result);
+#endif
+
             foreach (Player p in playerlist.Player)
             {
                 if (p.summonerName == PlayerName)
@@ -192,15 +240,15 @@ namespace SpellTracker.Control
                 }
             }
             await LoadPic();
-            timer.Start();
             IsSync = true;
-        }
+            //timer.Start();
+            }
 
         private async Task LoadPic()     
         {
             for (int i = 0; i < 10; i++)
             {
-                SpellImg[i].Source = await ImageCache.Instance.Get("img/" + summonerSpell[i] + ".png");
+                SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL);
             }
         }
 
@@ -240,16 +288,7 @@ namespace SpellTracker.Control
         private int GetSpellCD(int id)
         {
             string str = summonerSpell[id];
-            if (str == "SummonerFlash") return 300 - shift;
-            else if (str == "SummonerDot") return 180 - shift;
-            else if (str == "SummonerSmite") return 15 - shift;
-            else if (str == "SummonerBarrier") return 180 - shift;
-            else if (str == "SummonerBoost") return 210 - shift;
-            else if (str == "SummonerExhaust") return 210 - shift;
-            else if (str == "SummonerHaste") return 210 - shift;
-            else if (str == "SummonerHeal") return 240 - shift;
-            else if (str == "SummonerMana") return 240 - shift;
-            else if (str == "SummonerTeleport")
+            if (str == "SummonerTeleport")
             {
                 string Url = "https://127.0.0.1:2999/liveclientdata/playerlist";
                 string result = "{\n\"Player\": " + Get_UrlData(Url) + "\n}";
@@ -264,7 +303,10 @@ namespace SpellTracker.Control
                 }
                 return 420 - 10 * level[id / 2] - shift;
             }
-            return 0;
+            else
+            {
+                return Dic[summonerSpell[id]].SummonerCD - shift;
+            }
         }
     }
 }

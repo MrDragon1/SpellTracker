@@ -19,6 +19,7 @@ using SpellTracker.Data;
 using log4net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace SpellTracker
 {
@@ -34,51 +35,63 @@ namespace SpellTracker
         Process process = new Process();
         RiotParse RP;
 
+        public System.Timers.Timer timer = new System.Timers.Timer(1000);
 
         public MainWindow()
+        {
+            InitializeComponent();
+        }
+
+        private async void Main_Load(object sender, RoutedEventArgs e)
         {
             //配置log4
             Log.Info("===============Start log=================");
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("../../log4net.config"));
-            InitializeComponent();
-            Init();
+            await Init();
         }
 
-        private void Init()
+        private async Task Init()
         {
             _keyboardHook = new KeyBoardHook();
             _keyboardHook.SetHook();
             _keyboardHook.SetOnKeyDownEvent(Win32_Keydown);
 
             
-            if (Process.GetProcessesByName("type").Length != 0)
+            if (Process.GetProcessesByName("type").Length == 0)
             {
-                foreach (Process process in Process.GetProcessesByName("type")){
-                    KillProcess(process.ProcessName);
+                Log.debug("not found type.exe");
+                //foreach (Process process in Process.GetProcessesByName("type")){
+                //    KillProcess(process.ProcessName);
+                //}
+                try
+                {
+                    process.StartInfo.UseShellExecute = true;
+                    process.StartInfo.FileName = "G:\\Desktop\\Type\\build\\win-unpacked\\type.exe";
+                    //process.StartInfo.CreateNoWindow = true;
+                    process.Start();
+                }
+                catch
+                {
+                    Log.error("Init type.exe err! ");
+                }
+                try
+                {
+                    Senddata("setname", System.Environment.GetEnvironmentVariable("ComputerName"));
+                }
+                catch
+                {
+                    Log.error("Connect to type.exe err! ");
                 }
             }
-           
-            try
+            else
             {
-                process.StartInfo.UseShellExecute = true;
-                process.StartInfo.FileName = "G:\\Desktop\\Type\\build\\win-unpacked\\type.exe";
-                //process.StartInfo.CreateNoWindow = true;
-                process.Start();
-            }
-            catch
-            {
-                Log.error("Init type.exe err! ");
-            }
-            try
-            {
-                Senddata("setname", System.Environment.GetEnvironmentVariable("ComputerName"));
-            }
-            catch
-            {
-                Log.error("Connect to type.exe err! ");
+                Log.debug("found type.exe");
             }
 
+
+            Log.debug("begin new RiotParse");
             RP = new RiotParse();
+            await RP.GetSpells();
 
             RP.SpellImg[0] = SpellImage00; RP.SpellImg[1] = SpellImage01;
             RP.SpellImg[2] = SpellImage10; RP.SpellImg[3] = SpellImage11;
@@ -86,9 +99,33 @@ namespace SpellTracker
             RP.SpellImg[6] = SpellImage30; RP.SpellImg[7] = SpellImage31;
             RP.SpellImg[8] = SpellImage40; RP.SpellImg[9] = SpellImage41;
 
+            timer.Elapsed += new System.Timers.ElapsedEventHandler(Timeout); //到达时间的时候执行事件；   
+            timer.AutoReset = true;   //设置是执行一次（false）还是一直执行(true)；   
+            timer.Enabled = true;     //是否执行System.Timers.Timer.Elapsed事件
 
             Log.Info("Init data successfully!");
-            RP.Parse();
+            Log.Info("Begin Parse!");
+            await RP.Parse();
+            Log.Info("Parse data successfully!");
+            timer.Start();
+        }
+
+        public void Timeout(object source, System.Timers.ElapsedEventArgs e)
+        {
+            Thread t = new Thread(Run);
+            t.IsBackground = true; //设为后台程序
+            t.Start();
+            
+            //SpellImage40.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.CDSummonerBarrier.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()); 
+        }
+        public async void Run()
+        {
+            
+            this.Dispatcher.Invoke(new Action(async delegate
+            {
+                await RP.Update();
+            }));
+            
         }
 
         private void KillProcess(string processName)
@@ -102,14 +139,16 @@ namespace SpellTracker
                     //找到程序进程,kill之。
                     if (!thisproc.CloseMainWindow())
                     {
+                        Log.error("do Kill ");
                         thisproc.Kill();
+                        thisproc.WaitForExit();
                     }
                 }
 
             }
             catch (Exception Exc)
             {
-                Log.error(Exc.Message);
+                Log.error("Kill " + processName + ".exe failed" + Exc.Message);
             }
         }
 
@@ -268,5 +307,6 @@ namespace SpellTracker
             string data = JsonConvert.SerializeObject(msg);
             webSocket.Send(data);//发送消息的函数
         }
+
     }
 }

@@ -36,7 +36,7 @@ namespace SpellTracker.Control
             get { return (double)GetValue(SpeedRatioProperty); }
             set { SetValue(SpeedRatioProperty, value); }
         }
-        public static readonly DependencyProperty SpeedRatioProperty = DependencyProperty.Register("SpeedRatio", typeof(double), typeof(FadeImage), new PropertyMetadata(1.0));
+        public static readonly DependencyProperty SpeedRatioProperty = DependencyProperty.Register("SpeedRatio", typeof(double), typeof(FadeImage), new PropertyMetadata(0.67));
 
         private Image ImgA, ImgB;
         private Storyboard FadeIn, FadeOut;
