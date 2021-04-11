@@ -105,7 +105,7 @@ namespace SpellTracker.Control
                 {
                     SpellImg[i].IfFade = false;
                     //Console.WriteLine("spelltime = " + SpellTime[i].ToString() + " SummonerCD =: " + Dic[summonerSpell[i]].SummonerCD.ToString() + " percent= " + (SpellTime[i] * 100 / Dic[summonerSpell[i]].SummonerCD).ToString());
-                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, (Dic[summonerSpell[i]].SummonerCD - SpellTime[i]) * 100 / Dic[summonerSpell[i]].SummonerCD);
+                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, (Dic[summonerSpell[i]].SummonerCD - SpellTime[i]) * 360 / Dic[summonerSpell[i]].SummonerCD);
                 }
                 if (SpellTime[i] > 0) SpellTime[i]--;
             }

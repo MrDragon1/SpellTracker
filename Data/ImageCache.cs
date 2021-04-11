@@ -15,6 +15,9 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using SpellTracker.Control;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using Point = System.Drawing.Point;
+
 
 #nullable enable
 
@@ -40,7 +43,7 @@ namespace SpellTracker.Data
         }
 
         /* 100 => not in cd */
-        public async Task<BitmapSource> Get(string url, int percent = 100)
+        public async Task<BitmapSource> Get(string url, int percent = 360)
         {
             var sw = Stopwatch.StartNew();
            
@@ -57,7 +60,7 @@ namespace SpellTracker.Data
                 }
                 else
                 {
-                    if(percent == 100)
+                    if(percent == 360)
                     {
                         data = await new WebClient().DownloadDataTaskAsync(url);
                         Dicc[url + "_" + percent.ToString()] = img = (RawToBitmapImage(data), data);
@@ -98,21 +101,57 @@ namespace SpellTracker.Data
         {
             if (!Dicc.ContainsKey(url))
                 await Get(url);
-            var (n, d) = Dicc[url + "_100"];
+            var (n, d) = Dicc[url + "_360"];
 
             var fullimg = BitmapUtils.SetBrightness(BitmapUtils.ToBitmap(d),0.5);
             var cdimg = BitmapUtils.Grayscale(BitmapUtils.ToBitmap(d));
 
             var width = fullimg.Width;
             var height = fullimg.Height;
-
+            
+            Point origin = new Point(width / 2, height / 2);
+            Point midtop = new Point(width / 2, 0);
+            Point lefttop = new Point(0, 0);
+            Point righttop = new Point(width, 0);
+            Point leftbottom = new Point(0, height);
+            Point rightbottom = new Point(width, height);
+            double theta = (percent * Math.PI) / 180 ;
+            Point target = new Point(width / 2 + (int)(Math.Sin(theta) * width), height / 2 - (int)(Math.Cos(theta) * height));
+            Pen pen = new Pen(Color.White,2);
+            SolidBrush brush = new SolidBrush(Color.Black);
             var cdheight = fullimg.Height * percent / 100;
 
+            Point[]? poly_gray = null;
+            if(percent < 45 && percent >= 0) 
+            {
+                poly_gray = new Point[] { origin, midtop, lefttop, leftbottom, rightbottom, righttop, target};
+            }
+            else if ((percent < 135 && percent >= 45))
+            {
+                poly_gray = new Point[] { origin, midtop, lefttop, leftbottom, rightbottom, target };
+            }
+            else if ((percent < 225 && percent >= 135))
+            {
+                poly_gray = new Point[] { origin, midtop, lefttop, leftbottom, target };
+            }
+            else if ((percent < 315 && percent >= 225))
+            {
+                poly_gray = new Point[] { origin, midtop, lefttop, target };
+            }
+            else if (percent > 315 && percent <= 360)
+            {
+                poly_gray = new Point[] { origin, midtop, target };
+            }
             Bitmap res = new Bitmap(width, height);
             Graphics g1 = Graphics.FromImage(res);
             g1.FillRectangle(Brushes.White, new Rectangle(0, 0, width, height));
-            g1.DrawImage(fullimg, new Rectangle(0, 0, width, cdheight), new Rectangle(0, 0, width, cdheight), GraphicsUnit.Pixel);
-            g1.DrawImage(cdimg, new Rectangle(0, cdheight, width, height - cdheight), new Rectangle(0, cdheight, width, height - cdheight),GraphicsUnit.Pixel);
+            g1.DrawImage(fullimg, new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height), GraphicsUnit.Pixel);
+            g1.FillPolygon(brush, poly_gray);
+            //g1.DrawImage(fullimg, new Rectangle(0, 0, width, cdheight), new Rectangle(0, 0, width, cdheight), GraphicsUnit.Pixel);
+            //g1.DrawImage(cdimg, new Rectangle(0, cdheight, width, height - cdheight), new Rectangle(0, cdheight, width, height - cdheight),GraphicsUnit.Pixel);
+            g1.DrawLine(pen, origin, target);
+            g1.DrawLine(pen, origin, midtop);
+            res.Save("test.bmp");
             return res;
         }
 
@@ -121,7 +160,7 @@ namespace SpellTracker.Data
             if (!Dicc.ContainsKey(url))
                 await Get(url);
 
-            var (n, d) = Dicc[url + "_100"];
+            var (n, d) = Dicc[url + "_360"];
 
             var gray = BitmapUtils.Grayscale(BitmapUtils.ToBitmap(d));
             var g = BitmapUtils.Bitmap2BitmapSource(gray);

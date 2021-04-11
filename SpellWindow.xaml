@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpellTracker"
         mc:Ignorable="d"
-        Title="SpellWindow" Height="170" Width="340" Loaded="Main_Load"
+        Title="SpellWindow" Height="140" Width="340" Loaded="Main_Load"
         xmlns:controls="clr-namespace:SpellTracker.Control"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
          TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -13,11 +13,15 @@
          TextElement.FontSize="13"
          TextOptions.TextFormattingMode="Ideal"
          TextOptions.TextRenderingMode="Auto"
-         Background="{DynamicResource MaterialDesignPaper}"
-         FontFamily="{DynamicResource MaterialDesignFont}"
->
+         
+         FontFamily="{DynamicResource MaterialDesignFont}" WindowStyle="None"
+        >
+    <Window.Background>
+        <SolidColorBrush Opacity="0.2" Color="#ffffff"></SolidColorBrush>
+    </Window.Background>
 
     <Grid Margin="0,0,-280,-119">
+        
         <Grid.RenderTransform>
             <TransformGroup>
                 <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
@@ -30,14 +34,14 @@
         <Button x:Name="InitButton" Visibility="Visible"
         Style="{StaticResource MaterialDesignRaisedButton}"
         materialDesign:ButtonAssist.CornerRadius="20"
-        ToolTip="MaterialDesignRaisedButton with Round Corners" Height="Auto" Margin="119,79"
+        ToolTip="Click the button to start track the spell when you have started the game." Height="Auto" Margin="135,79,103,79"
                 Click="InitButton_Click">
             <TextBlock
             Text="Game is not started!" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" />
         </Button>
 
 
-        <Grid x:Name="SpellGrid" ShowGridLines="False" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" Height="244" VerticalAlignment="Bottom" Margin="4,0,-42,2" Grid.ColumnSpan="2">
+        <Grid x:Name="SpellGrid" ShowGridLines="False" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" Height="244" VerticalAlignment="Bottom" Margin="5,0,-43,4">
 
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
@@ -86,6 +90,7 @@
 
         </Grid>
 
+        <Border BorderBrush="#FFD6700A" BorderThickness="5" HorizontalAlignment="Left" Height="264" Margin="0,3,-60,-16" VerticalAlignment="Top" Width="672" CornerRadius="20"/>
 
     </Grid>
 </Window>

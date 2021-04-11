@@ -58,6 +58,11 @@ namespace SpellTracker
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            if (spellWindow.IsActive)
+            {
+                spellWindow.Close();
+                spellWindow = null;
+            }
             Log.Info("===============End log=================");
         }
     }

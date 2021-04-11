@@ -40,6 +40,10 @@ namespace SpellTracker
         public SpellWindow()
         {
             InitializeComponent();
+            this.AllowsTransparency = true;
+            this.WindowStyle = WindowStyle.None;
+            SpellGrid.Visibility = Visibility.Hidden;
+            InitButton.Visibility = Visibility.Visible;
         }
 
         private async void Main_Load(object sender, RoutedEventArgs e)
@@ -94,7 +98,7 @@ namespace SpellTracker
             Log.debug("begin new RiotParse");
             RP = new RiotParse();
             await RP.GetSpells();
-
+            Log.debug("new RiotParse successfully");
             RP.SpellImg[0] = SpellImage00; RP.SpellImg[1] = SpellImage01;
             RP.SpellImg[2] = SpellImage10; RP.SpellImg[3] = SpellImage11;
             RP.SpellImg[4] = SpellImage20; RP.SpellImg[5] = SpellImage21;
@@ -105,8 +109,6 @@ namespace SpellTracker
             timer.AutoReset = true;   //设置是执行一次（false）还是一直执行(true)；   
             timer.Enabled = true;     //是否执行System.Timers.Timer.Elapsed事件
 
-            SpellGrid.Visibility = Visibility.Hidden;
-
             timer.Start();
         }
 
@@ -114,8 +116,12 @@ namespace SpellTracker
         {
             if(RP.IsSync == false)
             {
-                SpellGrid.Visibility = Visibility.Hidden;
-                InitButton.Visibility = Visibility.Visible;
+                this.Dispatcher.Invoke(new Action( delegate
+                {
+                    SpellGrid.Visibility = Visibility.Hidden;
+                    InitButton.Visibility = Visibility.Visible;
+                }));
+                
             }
             else
             {
@@ -316,9 +322,12 @@ namespace SpellTracker
 
         private async void InitButton_Click(object sender, RoutedEventArgs e)
         {
-            InitButton.Visibility = Visibility.Hidden;
-            await RP.Parse();
-            SpellGrid.Visibility = Visibility.Visible;
+            if (IsInit)
+            {
+                await RP.Parse();
+                InitButton.Visibility = Visibility.Hidden;
+                SpellGrid.Visibility = Visibility.Visible;
+            }
         }
     }
 
