@@ -45,7 +45,7 @@ namespace SpellTracker
         private async void Main_Load(object sender, RoutedEventArgs e)
         {
             //配置log4
-            Log.Info("===============Start log=================");
+            Log.Info("---------------Start SpellTracker-----------------");
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("../../log4net.config"));
             await Init();
             Log.Info("Init data successfully!");
@@ -105,19 +105,25 @@ namespace SpellTracker
             timer.AutoReset = true;   //设置是执行一次（false）还是一直执行(true)；   
             timer.Enabled = true;     //是否执行System.Timers.Timer.Elapsed事件
 
+            SpellGrid.Visibility = Visibility.Hidden;
 
-            Log.Info("Begin Parse!");
-            await RP.Parse();
-            Log.Info("Parse data successfully!");
             timer.Start();
         }
 
         public void Timeout(object source, System.Timers.ElapsedEventArgs e)
         {
-            this.Dispatcher.Invoke(new Action(async delegate
+            if(RP.IsSync == false)
             {
-                await RP.Update();
-            }));
+                SpellGrid.Visibility = Visibility.Hidden;
+                InitButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.Dispatcher.Invoke(new Action(async delegate
+                {
+                    await RP.Update();
+                }));
+            }
         }
 
 
@@ -174,7 +180,7 @@ namespace SpellTracker
             _keyboardHook.UnHook();
             Log.Info("UnHooked");
             base.OnClosed(eventArgs);
-            Log.Info("================End================");
+            Log.Info("---------------Stop SpellTracker-----------------");
         }
 
 
@@ -306,6 +312,13 @@ namespace SpellTracker
             // 转为json字符串
             string data = JsonConvert.SerializeObject(msg);
             webSocket.Send(data);//发送消息的函数
+        }
+
+        private async void InitButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitButton.Visibility = Visibility.Hidden;
+            await RP.Parse();
+            SpellGrid.Visibility = Visibility.Visible;
         }
     }
 

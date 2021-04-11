@@ -34,15 +34,15 @@ namespace SpellTracker
             InitializeComponent();
         }
 
-        private async void Main_Load(object sender, RoutedEventArgs e)
+        private void Main_Load(object sender, RoutedEventArgs e)
         {
             //配置log4
             Log.Info("===============Start log=================");
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("../../log4net.config"));
-            
-            Log.Info("Init data successfully!");
-            
+
         }
+
+
 
         private void SpellTrackerToggle_Checked(object sender, RoutedEventArgs e)
         {
@@ -56,5 +56,9 @@ namespace SpellTracker
             spellWindow = null;
         }
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Log.Info("===============End log=================");
+        }
     }
 }
