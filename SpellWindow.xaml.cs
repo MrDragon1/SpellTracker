@@ -36,14 +36,17 @@ namespace SpellTracker
         RiotParse RP;
         public bool IsInit = false;
         public System.Timers.Timer timer = new System.Timers.Timer(1000);
+        public int shift;
 
-        public SpellWindow()
+
+        public SpellWindow(int shift = 10)
         {
             InitializeComponent();
             this.AllowsTransparency = true;
             this.WindowStyle = WindowStyle.None;
             SpellGrid.Visibility = Visibility.Hidden;
             InitButton.Visibility = Visibility.Visible;
+            this.shift = shift;
         }
 
         private async void Main_Load(object sender, RoutedEventArgs e)
@@ -53,9 +56,7 @@ namespace SpellTracker
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("../../log4net.config"));
             await Init();
             Log.Info("Init data successfully!");
-
             InitButtonText.Text = "Please start the game first.";
- 
             IsInit = true;
         }
 
@@ -100,6 +101,7 @@ namespace SpellTracker
 
             Log.debug("begin new RiotParse");
             RP = new RiotParse();
+            RP.shift = this.shift;
             await RP.GetSpells();
             Log.debug("new RiotParse successfully");
             RP.SpellImg[0] = SpellImage00; RP.SpellImg[1] = SpellImage01;

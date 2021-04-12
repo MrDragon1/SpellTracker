@@ -32,6 +32,8 @@ namespace SpellTracker
         public MainWindow()
         {
             InitializeComponent();
+            this.AllowsTransparency = true;
+            this.WindowStyle = WindowStyle.None;
         }
 
         private void Main_Load(object sender, RoutedEventArgs e)
@@ -46,7 +48,7 @@ namespace SpellTracker
 
         private void SpellTrackerToggle_Checked(object sender, RoutedEventArgs e)
         {
-            spellWindow = new SpellWindow();
+            spellWindow = new SpellWindow((int)Slider_Shift.Value);
             spellWindow.Show();
         }
 
@@ -64,6 +66,12 @@ namespace SpellTracker
                 spellWindow = null;
             }
             Log.Info("===============End log=================");
+        }
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                this.DragMove();
         }
     }
 }

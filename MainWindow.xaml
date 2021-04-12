@@ -5,33 +5,78 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpellTracker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Main_Load" Closed="Window_Closed"
+        Title="MainWindow" Height="336.5" Width="652.5" Loaded="Main_Load" Closed="Window_Closed"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
          TextElement.Foreground="{DynamicResource MaterialDesignBody}"
          TextElement.FontWeight="Regular"
          TextElement.FontSize="13"
          TextOptions.TextFormattingMode="Ideal"
          TextOptions.TextRenderingMode="Auto"
-         Background="{DynamicResource MaterialDesignPaper}"
-         FontFamily="{DynamicResource MaterialDesignFont}">
+         FontFamily="{DynamicResource MaterialDesignFont}"
+        Background="Transparent"
+         WindowStyle="None"  >
 
-    <Grid Margin="10,10,-8,0">
+    <Grid Margin="0,0,-8,0" Height="328" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="652">
+        <materialDesign:Card
+          Background="{DynamicResource PrimaryHueDarkBrush}"
+          Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+          Padding="8" 
+            MouseMove="Window_MouseMove"
+          UniformCornerRadius="20" Margin="0,0,10,10">
+            <TextBlock
+            TextWrapping="Wrap"
+            Text="You can adjust the corner radius" Margin="0,0,36,136" HorizontalAlignment="Right" FontWeight="Bold" FontSize="24" Width="532" Height="134" VerticalAlignment="Bottom" />
 
-        <ToggleButton x:Name="SpellTrackerToggle"
-          Style="{StaticResource MaterialDesignSwitchToggleButton}"
-          ToolTip="MaterialDesignSwitchToggleButton"
-          IsChecked="False" RenderTransformOrigin="0.5,0.5" 
-            Checked="SpellTrackerToggle_Checked"
-            Unchecked="SpellTrackerToggle_Unchecked">
-            <ToggleButton.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleX="2" ScaleY="2"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </ToggleButton.RenderTransform>
-        </ToggleButton>
+        </materialDesign:Card>
+        <Grid HorizontalAlignment="Left" Margin="56,192,0,26" Width="538">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
 
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <ToggleButton x:Name="SpellTrackerToggle" Grid.Column="0" Grid.Row="0"
+              Style="{StaticResource MaterialDesignSwitchToggleButton}"
+              ToolTip="MaterialDesignSwitchToggleButton"
+              IsChecked="False" RenderTransformOrigin="0.5,0.5" 
+                Checked="SpellTrackerToggle_Checked"
+                Unchecked="SpellTrackerToggle_Unchecked" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <TextBlock Text="Start/Stop" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
+
+            <ToggleButton x:Name="SpellTrackerToggle2" Grid.Column="0" Grid.Row="1"
+              Style="{StaticResource MaterialDesignSwitchToggleButton}"
+              ToolTip="MaterialDesignSwitchToggleButton"
+              IsChecked="False" RenderTransformOrigin="0.5,0.5" 
+                Checked="SpellTrackerToggle_Checked"
+                Unchecked="SpellTrackerToggle_Unchecked" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <TextBlock Text="SpellTrackerToggle2" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
+
+            <Slider x:Name="Slider_Shift" Grid.Column="1" Grid.Row="0" BorderThickness="4"
+              TickFrequency="1"
+              Orientation="Horizontal" 
+              Minimum="0"
+              Maximum="50" 
+              Value="25" Margin="0,12,30,11" Foreground="#DDFFFFFF" HorizontalAlignment="Right" Width="184" IsSnapToTickEnabled="True" >
+            </Slider>
+            <TextBlock Text="Shift:" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="0"/>
+            <TextBlock Text="{Binding Value,ElementName=Slider_Shift}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="0"/>
+
+
+            <ToggleButton x:Name="SpellTrackerToggle4" Grid.Column="1" Grid.Row="1"
+              Style="{StaticResource MaterialDesignSwitchToggleButton}"
+              ToolTip="MaterialDesignSwitchToggleButton"
+              IsChecked="False" RenderTransformOrigin="0.5,0.5" 
+                Checked="SpellTrackerToggle_Checked"
+                Unchecked="SpellTrackerToggle_Unchecked" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <TextBlock Text="SpellTrackerToggle4" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
+
+
+        </Grid>
     </Grid>
+
+
 </Window>
