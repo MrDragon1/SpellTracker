@@ -104,8 +104,8 @@ namespace SpellTracker.Control
                 else if (SpellTime[i] > 0)
                 {
                     SpellImg[i].IfFade = false;
-                    //Console.WriteLine("spelltime = " + SpellTime[i].ToString() + " SummonerCD =: " + Dic[summonerSpell[i]].SummonerCD.ToString() + " percent= " + (SpellTime[i] * 100 / Dic[summonerSpell[i]].SummonerCD).ToString());
-                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, (Dic[summonerSpell[i]].SummonerCD - SpellTime[i]) * 360 / Dic[summonerSpell[i]].SummonerCD);
+                    double theta = ((double)Dic[summonerSpell[i]].SummonerCD - (double)SpellTime[i]) / (double)Dic[summonerSpell[i]].SummonerCD;
+                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, (int)(theta * 360));
                 }
                 if (SpellTime[i] > 0) SpellTime[i]--;
             }
@@ -121,12 +121,14 @@ namespace SpellTracker.Control
                 if (SpellTime[id] == 0)
                 {
                     SpellTime[id] = GetSpellCD(id);
+                    SpellImg[id].IfFade = true;
                     SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL, 0);
                     //(ImageSource)Application.Current.FindResource("img/CD" + summonerSpell[id] + ".png");
                 }
                 else
                 {
                     SpellTime[id] = 0;
+                    SpellImg[id].IfFade = true;
                     SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL);
                 }
             }

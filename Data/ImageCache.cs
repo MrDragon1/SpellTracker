@@ -65,15 +65,15 @@ namespace SpellTracker.Data
                         data = await new WebClient().DownloadDataTaskAsync(url);
                         Dicc[url + "_" + percent.ToString()] = img = (RawToBitmapImage(data), data);
                     }
-                    else if (percent == 0)
-                    {
-                        var bm = await GetGrayscale(url);
-                        MemoryStream ms = new MemoryStream();
-                        bm.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-                        data = ms.GetBuffer();
-                        ms.Close();
-                        Dicc[url + "_" + percent.ToString()] = img = (BitmapUtils.Bitmap2BitmapSource(bm), data);
-                    }
+                    //else if (percent == 0)
+                    //{
+                    //    var bm = await GetGrayscale(url);
+                    //    MemoryStream ms = new MemoryStream();
+                    //    bm.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                    //    data = ms.GetBuffer();
+                    //    ms.Close();
+                    //    Dicc[url + "_" + percent.ToString()] = img = (BitmapUtils.Bitmap2BitmapSource(bm), data);
+                    //}
                     else
                     {
                         var bm = await GetpercentCDImg(url, percent);

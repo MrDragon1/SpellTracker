@@ -53,6 +53,9 @@ namespace SpellTracker
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("../../log4net.config"));
             await Init();
             Log.Info("Init data successfully!");
+
+            InitButtonText.Text = "Please start the game first.";
+ 
             IsInit = true;
         }
 
@@ -328,6 +331,13 @@ namespace SpellTracker
                 InitButton.Visibility = Visibility.Hidden;
                 SpellGrid.Visibility = Visibility.Visible;
             }
+            
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                this.DragMove();
         }
     }
 
