@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpellTracker.Data
 {
-    class SummonerSpell
+    public class SummonerSpell
     {
         public int ID { get; set; }
         public string Key { get; set; }

@@ -14,7 +14,9 @@
          TextOptions.TextFormattingMode="Ideal"
          TextOptions.TextRenderingMode="Auto"
          MouseDown="Window_MouseDown"   
-         FontFamily="{DynamicResource MaterialDesignFont}" WindowStyle="None" Topmost="True"
+         FontFamily="{DynamicResource MaterialDesignFont}" 
+        WindowStyle="None" Topmost="True"
+        AllowsTransparency="True"
         >
     <Window.Background>
         <SolidColorBrush Opacity="0.01" Color="#000000"></SolidColorBrush>

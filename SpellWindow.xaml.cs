@@ -29,11 +29,11 @@ namespace SpellTracker
     public partial class SpellWindow : Window
     {
         /* Basic Data */
-        KeyBoardHook _keyboardHook;
+
         static string webPath = "ws://127.0.0.1:2333";
         WebSocket webSocket = new WebSocket(webPath);
         Process process = new Process();
-        RiotParse RP;
+        public RiotParse RP;
         public bool IsInit = false;
         public System.Timers.Timer timer = new System.Timers.Timer(1000);
         public int shift;
@@ -42,8 +42,6 @@ namespace SpellTracker
         public SpellWindow(int shift = 10)
         {
             InitializeComponent();
-            this.AllowsTransparency = true;
-            this.WindowStyle = WindowStyle.None;
             SpellGrid.Visibility = Visibility.Hidden;
             InitButton.Visibility = Visibility.Visible;
             this.shift = shift;
@@ -53,7 +51,6 @@ namespace SpellTracker
         {
             //配置log4
             Log.Info("---------------Start SpellTracker-----------------");
-            log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("../../log4net.config"));
             await Init();
             Log.Info("Init data successfully!");
             InitButtonText.Text = "Please start the game first.";
@@ -62,27 +59,23 @@ namespace SpellTracker
 
         private async Task Init()
         {
-            _keyboardHook = new KeyBoardHook();
-            _keyboardHook.SetHook();
-            _keyboardHook.SetOnKeyDownEvent(Win32_Keydown);
-
-
+           
             if (Process.GetProcessesByName("type").Length == 0)
             {
-                Log.debug("not found type.exe");
+                Log.debug("Not found type.exe");
                 //foreach (Process process in Process.GetProcessesByName("type")){
                 //    KillProcess(process.ProcessName);
                 //}
                 try
                 {
                     process.StartInfo.UseShellExecute = true;
-                    process.StartInfo.FileName = "G:\\Desktop\\Type\\build\\win-unpacked\\type.exe";
+                    process.StartInfo.FileName = "type\\type.exe";
                     //process.StartInfo.CreateNoWindow = true;
                     process.Start();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Log.error("Init type.exe err! ");
+                    Log.error("Init type.exe err! ",ex);
                 }
                 try
                 {
@@ -95,11 +88,10 @@ namespace SpellTracker
             }
             else
             {
-                Log.debug("found type.exe");
+                Log.debug("Found type.exe");
             }
 
-
-            Log.debug("begin new RiotParse");
+            Log.debug("Begin new RiotParse");
             RP = new RiotParse();
             RP.shift = this.shift;
             await RP.GetSpells();
@@ -119,21 +111,28 @@ namespace SpellTracker
 
         public void Timeout(object source, System.Timers.ElapsedEventArgs e)
         {
-            if(RP.IsSync == false)
+            try
             {
-                this.Dispatcher.Invoke(new Action( delegate
+                if (RP.IsSync == false)
                 {
-                    SpellGrid.Visibility = Visibility.Hidden;
-                    InitButton.Visibility = Visibility.Visible;
-                }));
-                
+                    this.Dispatcher.Invoke(new Action(delegate
+                    {
+                        SpellGrid.Visibility = Visibility.Hidden;
+                        InitButton.Visibility = Visibility.Visible;
+                    }));
+
+                }
+                else
+                {
+                    this.Dispatcher.Invoke(new Action(async delegate
+                    {
+                        await RP.Update();
+                    }));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                this.Dispatcher.Invoke(new Action(async delegate
-                {
-                    await RP.Update();
-                }));
+                Log.error("In timeout func ", ex);
             }
         }
 
@@ -162,20 +161,6 @@ namespace SpellTracker
             Log.Info("Successfully kill the " + processName + ".exe");
         }
 
-        private void Win32_Keydown(Key key)
-        {
-            switch (key)
-            {
-                case Key.Add:
-                    {
-                        RP.Type();
-                        Senddata("update", RP.TypeStr);
-                        Log.Info(RP.TypeStr);
-                        Senddata("show", RP.TypeStr);
-                    }
-                    break;
-            }
-        }
 
         protected override void OnClosed(EventArgs eventArgs)
         {
@@ -188,8 +173,6 @@ namespace SpellTracker
                 }
             }
 
-            _keyboardHook.UnHook();
-            Log.Info("UnHooked");
             base.OnClosed(eventArgs);
             Log.Info("---------------Stop SpellTracker-----------------");
         }
@@ -340,6 +323,14 @@ namespace SpellTracker
         {
             if (e.LeftButton == MouseButtonState.Pressed)
                 this.DragMove();
+        }
+
+        public void Type()
+        {
+            RP.Type();
+            Senddata("update", RP.TypeStr);
+            Log.Info(RP.TypeStr);
+            Senddata("show", RP.TypeStr);
         }
     }
 

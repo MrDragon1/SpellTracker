@@ -56,7 +56,7 @@ namespace SpellTracker.Data
                 {
                     data = File.ReadAllBytes(file);
                     Dicc[url + "_" + percent.ToString()] = img = (RawToBitmapImage(data), data);
-                    Log.Info($"Time: {sw.Elapsed} {url} percent: {percent}% Hit");
+                    Log.Info($"Time: {sw.Elapsed} {url} percent: {percent} Hit");
                 }
                 else
                 {
@@ -89,11 +89,14 @@ namespace SpellTracker.Data
                         Directory.CreateDirectory(CachePath);
                         File.WriteAllBytes(file, data);
                     }
-                    Log.Info($"Time: {sw.Elapsed} {url} percent: {percent}% Loaded");
+                    Log.Info($"Time: {sw.Elapsed} {url} percent: {percent} Loaded");
                 }
 
             }
-            
+            else
+            {
+                Log.Info($"Time: {sw.Elapsed} {url} percent: {percent} Hit");
+            }
             return img.Normal;
         }
 
@@ -138,7 +141,7 @@ namespace SpellTracker.Data
             {
                 poly_gray = new Point[] { origin, midtop, lefttop, target };
             }
-            else if (percent > 315 && percent <= 360)
+            else if (percent >= 315 && percent <= 360)
             {
                 poly_gray = new Point[] { origin, midtop, target };
             }

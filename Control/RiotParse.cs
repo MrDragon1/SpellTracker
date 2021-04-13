@@ -21,7 +21,7 @@ using System.Collections.Concurrent;
 
 namespace SpellTracker.Control
 {
-    class RiotParse
+    public class RiotParse
     {
         public int GameTime;
         public string GameMode, PlayerName;
@@ -83,7 +83,6 @@ namespace SpellTracker.Control
 #if !DEBUG
             if (Process.GetProcessesByName("League of legends").Length == 0)
                         {
-                            timer.Stop();
                             IsSync = false;
                             Reset();
                             return;
