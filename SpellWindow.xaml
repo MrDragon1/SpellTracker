@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpellTracker"
         mc:Ignorable="d"
-        Title="SpellWindow" Height="140" Width="340" Loaded="Main_Load"
+        Title="SpellWindow" Height="95" Width="236" Loaded="Main_Load"
         xmlns:controls="clr-namespace:SpellTracker.Control"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
          TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -22,11 +22,11 @@
         <SolidColorBrush Opacity="0.01" Color="#000000"></SolidColorBrush>
     </Window.Background>
 
-    <Grid Margin="0,0,-280,-119">
+    <Grid Margin="0,0,-435,-163">
 
         <Grid.RenderTransform>
             <TransformGroup>
-                <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                <ScaleTransform ScaleX="0.35" ScaleY="0.35"/>
                 <SkewTransform/>
                 <RotateTransform/>
                 <TranslateTransform/>
@@ -39,11 +39,11 @@
         ToolTip="Click the button to start track the spell when you have started the game." Height="Auto" Margin="135,79,103,79"
                 Click="InitButton_Click">
             <TextBlock x:Name="InitButtonText"
-            Text="Initializing ..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" />
+            Text="Initializing ..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="28" FontWeight="Bold" />
         </Button>
 
 
-        <Grid x:Name="SpellGrid" ShowGridLines="False" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" Height="244" VerticalAlignment="Bottom" Margin="5,0,-43,4">
+        <Grid x:Name="SpellGrid" ShowGridLines="False" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" Height="238" VerticalAlignment="Bottom" Margin="5,0,-1,10">
 
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>

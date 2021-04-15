@@ -34,7 +34,7 @@ namespace SpellTracker.Control
         public int shift = 10;
         public string playerteam = "";
         public bool IsSync = false;
-
+        public bool FlashOnly = true;
         public SummonerSpell[] spells;
         private readonly IDictionary<string, SummonerSpell > Dic = new ConcurrentDictionary<string, SummonerSpell>();
 
@@ -256,19 +256,20 @@ namespace SpellTracker.Control
         public void Type()
         {
             if (IsSync == false) return;
+            string[] pos = { "TOP", "TOP", "JUG", "JUG", "MID", "MID", "AD", "AD", "SUP", "SUP" };
             //Thread.Sleep(2000);
             string str = "";
-            if (SpellTime[0] > 0) str += ("TOP") + GetSpellShortName(summonerSpell[0]) + GetTimeInMinute(GameTime + SpellTime[0]) + (" ");
-            if (SpellTime[1] > 0) str += ("TOP") + GetSpellShortName(summonerSpell[1]) + GetTimeInMinute(GameTime + SpellTime[1]) + (" ");
-            if (SpellTime[2] > 0) str += ("JUG") + GetSpellShortName(summonerSpell[2]) + GetTimeInMinute(GameTime + SpellTime[2]) + (" ");
-            if (SpellTime[3] > 0) str += ("JUG") + GetSpellShortName(summonerSpell[3]) + GetTimeInMinute(GameTime + SpellTime[3]) + (" ");
-            if (SpellTime[4] > 0) str += ("MID") + GetSpellShortName(summonerSpell[4]) + GetTimeInMinute(GameTime + SpellTime[4]) + (" ");
-            if (SpellTime[5] > 0) str += ("MID") + GetSpellShortName(summonerSpell[5]) + GetTimeInMinute(GameTime + SpellTime[5]) + (" ");
-            if (SpellTime[6] > 0) str += ("AD") + GetSpellShortName(summonerSpell[6]) + GetTimeInMinute(GameTime + SpellTime[6]) + (" ");
-            if (SpellTime[7] > 0) str += ("AD") + GetSpellShortName(summonerSpell[7]) + GetTimeInMinute(GameTime + SpellTime[7]) + (" ");
-            if (SpellTime[8] > 0) str += ("SUP") + GetSpellShortName(summonerSpell[8]) + GetTimeInMinute(GameTime + SpellTime[8]) + (" ");
-            if (SpellTime[9] > 0) str += ("SUP") + GetSpellShortName(summonerSpell[9]) + GetTimeInMinute(GameTime + SpellTime[9]) + (" ");
-
+            for(int i = 0; i < 10; i++)
+            {
+                if (FlashOnly)
+                {
+                    if (SpellTime[i] > 0 && (summonerSpell[i] == "SummonerFlash" || summonerSpell[i] == "SummonerTeleport")) str += pos[i] + GetSpellShortName(summonerSpell[i]) + GetTimeInMinute(GameTime + SpellTime[i]) + (" ");
+                }
+                else
+                {
+                    if (SpellTime[i] > 0) str += pos[i] + GetSpellShortName(summonerSpell[i]) + GetTimeInMinute(GameTime + SpellTime[i]) + (" ");
+                }
+            }
             typestr = str;
         }
 

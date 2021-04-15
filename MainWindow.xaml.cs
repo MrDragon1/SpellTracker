@@ -63,12 +63,12 @@ namespace SpellTracker
                     break;
             }
         }
-
         private void SpellTrackerToggle_Checked(object sender, RoutedEventArgs e)
         {
-            spellWindow = new SpellWindow((int)Slider_Shift.Value);
+            spellWindow = new SpellWindow((int)Slider_Shift.Value,(bool) FTOnly.IsChecked);
             spellWindow.Show();
             Slider_Shift.IsEnabled = false;
+            FTOnly.IsEnabled = false;
         }
 
         private void SpellTrackerToggle_Unchecked(object sender, RoutedEventArgs e)
@@ -76,6 +76,7 @@ namespace SpellTracker
             spellWindow.Close();
             spellWindow = null;
             Slider_Shift.IsEnabled = true;
+            FTOnly.IsEnabled = true;
         }
 
         private void Window_Closing(object sender, EventArgs e)

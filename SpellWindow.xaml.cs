@@ -37,14 +37,15 @@ namespace SpellTracker
         public bool IsInit = false;
         public System.Timers.Timer timer = new System.Timers.Timer(1000);
         public int shift;
+        public bool FlashOnly;
 
-
-        public SpellWindow(int shift = 10)
+        public SpellWindow(int shift = 10,bool FlashOnly = true)
         {
             InitializeComponent();
             SpellGrid.Visibility = Visibility.Hidden;
             InitButton.Visibility = Visibility.Visible;
             this.shift = shift;
+            this.FlashOnly = FlashOnly;
         }
 
         private async void Main_Load(object sender, RoutedEventArgs e)
@@ -94,6 +95,7 @@ namespace SpellTracker
             Log.debug("Begin new RiotParse");
             RP = new RiotParse();
             RP.shift = this.shift;
+            RP.FlashOnly = this.FlashOnly;
             await RP.GetSpells();
             Log.debug("new RiotParse successfully");
             RP.SpellImg[0] = SpellImage00; RP.SpellImg[1] = SpellImage01;
