@@ -56,7 +56,7 @@ namespace SpellTracker.Data
                 {
                     data = File.ReadAllBytes(file);
                     Dicc[url + "_" + percent.ToString()] = img = (RawToBitmapImage(data), data);
-                    Log.Info($"Time: {sw.Elapsed} {url} percent: {percent} Hit");
+                    //Log.Info($"Time: {sw.Elapsed} {url} percent: {percent} Hit");
                 }
                 else
                 {
@@ -95,7 +95,7 @@ namespace SpellTracker.Data
             }
             else
             {
-                Log.Info($"Time: {sw.Elapsed} {url} percent: {percent} Hit");
+                //Log.Info($"Time: {sw.Elapsed} {url} percent: {percent} Hit");
             }
             return img.Normal;
         }
@@ -122,7 +122,6 @@ namespace SpellTracker.Data
             Point target = new Point(width / 2 + (int)(Math.Sin(theta) * width), height / 2 - (int)(Math.Cos(theta) * height));
             Pen pen = new Pen(Color.White,2);
             SolidBrush brush = new SolidBrush(Color.Black);
-            var cdheight = fullimg.Height * percent / 100;
 
             Point[]? poly_gray = null;
             if(percent < 45 && percent >= 0) 
@@ -150,11 +149,9 @@ namespace SpellTracker.Data
             g1.FillRectangle(Brushes.White, new Rectangle(0, 0, width, height));
             g1.DrawImage(fullimg, new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height), GraphicsUnit.Pixel);
             g1.FillPolygon(brush, poly_gray);
-            //g1.DrawImage(fullimg, new Rectangle(0, 0, width, cdheight), new Rectangle(0, 0, width, cdheight), GraphicsUnit.Pixel);
-            //g1.DrawImage(cdimg, new Rectangle(0, cdheight, width, height - cdheight), new Rectangle(0, cdheight, width, height - cdheight),GraphicsUnit.Pixel);
             g1.DrawLine(pen, origin, target);
             g1.DrawLine(pen, origin, midtop);
-            res.Save("test.bmp");
+            //res.Save("test.bmp");
             return res;
         }
 

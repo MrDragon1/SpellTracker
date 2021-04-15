@@ -100,6 +100,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Log" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -178,6 +179,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="log4net.config" />
     <None Include="packages.config" />
@@ -190,87 +192,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\20201002110749736_easyicon_net_32.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\BLANK.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerBarrier.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerBoost.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerDot.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerExhaust.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerFlash.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerHaste.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerHeal.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerMana.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerSmite.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\CDSummonerTeleport.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerBarrier.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerBoost.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerDot.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerExhaust.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerFlash.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerHaste.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerHeal.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerMana.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerSmite.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerSnowball.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\SummonerTeleport.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\sync.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\type.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\WHITE.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\yin-yang.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="page\" />
@@ -289,6 +210,35 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\20201002110749736_easyicon_net_32.ico" />
+    <Resource Include="img\BLANK.bmp" />
+    <Resource Include="img\CDSummonerBarrier.png" />
+    <Resource Include="img\CDSummonerBoost.png" />
+    <Resource Include="img\CDSummonerDot.png" />
+    <Resource Include="img\CDSummonerExhaust.png" />
+    <Resource Include="img\CDSummonerFlash.png" />
+    <Resource Include="img\CDSummonerHaste.png" />
+    <Resource Include="img\CDSummonerHeal.png" />
+    <Resource Include="img\CDSummonerMana.png" />
+    <Resource Include="img\CDSummonerSmite.png" />
+    <Resource Include="img\CDSummonerTeleport.png" />
+    <Resource Include="img\SummonerBarrier.png" />
+    <Resource Include="img\SummonerBoost.png" />
+    <Resource Include="img\SummonerDot.png" />
+    <Resource Include="img\SummonerExhaust.png" />
+    <Resource Include="img\SummonerFlash.png" />
+    <Resource Include="img\SummonerHaste.png" />
+    <Resource Include="img\SummonerHeal.png" />
+    <Resource Include="img\SummonerMana.png" />
+    <Resource Include="img\SummonerSmite.png" />
+    <Resource Include="img\SummonerSnowball.png" />
+    <Resource Include="img\SummonerTeleport.png" />
+    <Resource Include="img\sync.png" />
+    <Resource Include="img\type.png" />
+    <Resource Include="img\WHITE.bmp" />
+    <Resource Include="img\yin-yang.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\MaterialDesignThemes.4.0.0\build\MaterialDesignThemes.targets" Condition="Exists('packages\MaterialDesignThemes.4.0.0\build\MaterialDesignThemes.targets')" />

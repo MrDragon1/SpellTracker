@@ -1,30 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WebSocketSharp;
 using System.Diagnostics;
 using SpellTracker.Control;
-using SpellTracker.Data;
-using log4net;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Threading;
+using System.Net.Sockets;
+using System.Net;
+using System.Management;
 
 //TODO:设置语言
 //TODO:添加版本及版权信息
 //TODO:测试发布
-//TODO:finish the user guide
+//TODO:setting page too empty
 namespace SpellTracker
 {
     /// <summary>
@@ -35,7 +23,10 @@ namespace SpellTracker
         public SpellWindow spellWindow;
 
         KeyBoardHook _keyboardHook;
-
+        private Socket ValidationSocket;
+        private IPAddress ips;
+        private IPEndPoint ipNode;
+        private bool Valid = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -47,10 +38,82 @@ namespace SpellTracker
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
             Log.Info("===============Start log=================");
 
+            try
+            {
+                ValidationSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                ips = IPAddress.Parse(Encoding.UTF8.GetString(Convert.FromBase64String("MzkuOTYuMTkuMTgy")));
+                ipNode = new IPEndPoint(ips, 8210);
+                //ValidationSocket.Connect(ipNode);
+
+                IAsyncResult result = ValidationSocket.BeginConnect(ipNode, null, null);
+
+                result.AsyncWaitHandle.WaitOne(2000);
+                
+                if (!result.IsCompleted)
+                {
+                    Valid = false;
+                    ValidationText.Text = "连接失败，请重启程序。";
+                    ValidationText.FontSize = 18;
+                    ValidationSocket.Close();
+                    Log.fatal("Connected failed!");
+                }
+                else
+                {
+                    string rl = System.Environment.GetEnvironmentVariable("ComputerName");
+                    //发送消息到服务端
+                    rl = rl + "_" + Get_CPUID();
+                    ValidationSocket.Send(Encoding.UTF8.GetBytes(rl));
+                    byte[] buffer = new byte[1024];
+                    int num = ValidationSocket.Receive(buffer);
+                    string str = Encoding.UTF8.GetString(buffer, 0, num);
+                    ValidationSocket.Disconnect(false);
+                    if (str != rl)
+                    {
+                        Valid = false;
+                        ValidationText.Text = "验证失败，请重启程序。";
+                        ValidationText.FontSize = 18;
+                        ValidationSocket.Close();
+                        Log.fatal("Validation failed!");
+                    }
+                    else
+                    {
+                        Log.Info("Validation passed!");
+                        Valid = true;
+                        ValidationText.Text = "验证成功！";
+                    }   
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.fatal("Connected Error!" + ex.Message);
+            }
+
             _keyboardHook = new KeyBoardHook();
             _keyboardHook.SetHook();
             _keyboardHook.SetOnKeyDownEvent(Win32_Keydown);
         }
+
+        public static string Get_CPUID()
+        {
+            try
+            {
+                //需要在解决方案中引用System.Management.DLL文件  
+                ManagementClass mc = new ManagementClass("Win32_Processor");
+                ManagementObjectCollection moc = mc.GetInstances();
+                string strCpuID = null;
+                foreach (ManagementObject mo in moc)
+                {
+                    strCpuID = mo.Properties["ProcessorId"].Value.ToString();
+                    mo.Dispose();
+                    break;
+                }
+                return strCpuID;
+            }
+            catch
+            {
+                return "";
+            }
+        }  
 
         private void Win32_Keydown(Key key)
         {
@@ -65,18 +128,29 @@ namespace SpellTracker
         }
         private void SpellTrackerToggle_Checked(object sender, RoutedEventArgs e)
         {
-            spellWindow = new SpellWindow((int)Slider_Shift.Value,(bool) FTOnly.IsChecked);
-            spellWindow.Show();
-            Slider_Shift.IsEnabled = false;
-            FTOnly.IsEnabled = false;
+            if (Valid)
+            {
+                spellWindow = new SpellWindow((int)Slider_Shift.Value, (bool)FTOnly.IsChecked);
+                spellWindow.Show();
+                Slider_Shift.IsEnabled = false;
+                FTOnly.IsEnabled = false;
+            }
+            else
+            {
+                //TODO:应该强调validation fail
+            }
+
         }
 
         private void SpellTrackerToggle_Unchecked(object sender, RoutedEventArgs e)
         {
-            spellWindow.Close();
-            spellWindow = null;
-            Slider_Shift.IsEnabled = true;
-            FTOnly.IsEnabled = true;
+            if (Valid)
+            {
+                spellWindow.Close();
+                spellWindow = null;
+                Slider_Shift.IsEnabled = true;
+                FTOnly.IsEnabled = true;
+            }
         }
 
         private void Window_Closing(object sender, EventArgs e)
@@ -114,5 +188,6 @@ namespace SpellTracker
         {
             try { System.Diagnostics.Process.Start("https://github.com/MrDragon1/SpellTracker"); } catch { }
         }
+
     }
 }
