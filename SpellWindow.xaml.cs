@@ -298,7 +298,7 @@ namespace SpellTracker
             if (text == "")
             {
                 Log.Info("Type empty string occur!");
-                return;
+                //return;
             }
             webSocket.Connect();
             JObject msg = new JObject();
@@ -309,7 +309,6 @@ namespace SpellTracker
             string data = JsonConvert.SerializeObject(msg);
             webSocket.Send(data);//发送消息的函数
         }
-
         private async void InitButton_Click(object sender, RoutedEventArgs e)
         {
             if (IsInit)

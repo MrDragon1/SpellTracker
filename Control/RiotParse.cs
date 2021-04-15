@@ -31,6 +31,7 @@ namespace SpellTracker.Control
         public string[] summonerSpell = new string[10];
         public FadeImage[] SpellImg = new FadeImage[10];
         public int[] SpellTime = new int[10];
+        public int[] SpellTotalTime = new int[10];
         public int shift = 10;
         public string playerteam = "";
         public bool IsSync = false;
@@ -58,6 +59,7 @@ namespace SpellTracker.Control
             {
                 Dic[p.Key] = p;
             }
+            
         }
 
         private void Reset()
@@ -103,7 +105,7 @@ namespace SpellTracker.Control
                 else if (SpellTime[i] > 0)
                 {
                     SpellImg[i].IfFade = false;
-                    double theta = ((double)Dic[summonerSpell[i]].SummonerCD - (double)SpellTime[i]) / (double)Dic[summonerSpell[i]].SummonerCD;
+                    double theta = ((double)SpellTotalTime[i] - (double)SpellTime[i]) / (double)SpellTotalTime[i];
                     SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, (int)(theta * 360));
                 }
                 if (SpellTime[i] > 0) SpellTime[i]--;
@@ -241,6 +243,10 @@ namespace SpellTracker.Control
                     championName.Add(p.championName);
                 }
             }
+            for(int i = 0; i < 10; i++)
+            {
+                SpellTotalTime[i] = Dic[summonerSpell[i]].SummonerCD;
+            }
             await LoadPic();
             IsSync = true;
             }
@@ -303,11 +309,13 @@ namespace SpellTracker.Control
                         level.Add((int)Convert.ToSingle(p.level));
                     }
                 }
-                return 420 - 10 * level[id / 2] - shift;
+                Log.Info("tp cd:" + (420 - 10 * level[id / 2] - shift).ToString());
+                SpellTotalTime[id] = 420 - 10 * level[id / 2] - shift;
+                return 432 - 12 * level[id / 2] - shift;
             }
             else
             {
-                return Dic[summonerSpell[id]].SummonerCD - shift;
+                return SpellTotalTime[id] - shift;
             }
         }
     }
