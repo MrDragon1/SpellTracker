@@ -36,10 +36,10 @@
         <Button x:Name="InitButton" Visibility="Visible"
         Style="{StaticResource MaterialDesignRaisedButton}"
         materialDesign:ButtonAssist.CornerRadius="20"
-        ToolTip="Click the button to start track the spell when you have started the game." Height="Auto" Margin="135,79,103,79"
+        ToolTip="点我启动确保已经进入游戏，不是客户端界面" Height="Auto" Margin="135,79,103,79"
                 Click="InitButton_Click">
             <TextBlock x:Name="InitButtonText"
-            Text="Initializing ..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="28" FontWeight="Bold" />
+            Text="正在初始化 ..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="28" FontWeight="Bold" />
         </Button>
 
 

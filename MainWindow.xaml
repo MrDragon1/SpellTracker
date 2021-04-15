@@ -30,29 +30,54 @@
             </Grid.RowDefinitions>
 
             <!-- lefttop logo -->
-            <Grid Grid.Row="0" Grid.Column="0" MouseMove="Window_MouseMove">
+            <materialDesign:PackIcon Grid.Row="0" Grid.Column="0" Kind="CameraTimer" Margin="5,12,0,0" Height="26" Width="22" Foreground="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" />
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" MouseMove="Window_MouseMove">
                 <TextBlock Text="SpellTracker"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Left"
-                       Margin="20,0,0,0"
+                       Margin="30,0,0,0"
                        FontSize="22"
-                       Foreground="White"/>
+                       Foreground="White" FontFamily="Segoe Script" FontWeight="Bold"/>
             </Grid>
 
-            <!-- left menu -->
-            <StackPanel Grid.Row="1" Grid.Column="0">
-                <RadioButton x:Name="Guide"  Content="User Guide"
-                             Height="50"
+
+            <Grid Grid.Row="1" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="141*"></RowDefinition>
+                    <RowDefinition Height="34*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <!-- left menu -->
+                <StackPanel Grid.Row="0" Grid.Column="0" >
+                    <RadioButton x:Name="Guide"  Content="使用说明"
+                             Height="50" 
                              Foreground="White"
                              FontSize="14"
                              IsChecked="True"
                              Style="{StaticResource MenuButtonTheme}"/>
-                <RadioButton x:Name="Setting" Content="Setting"
+                    <RadioButton x:Name="Setting" Content="设置"
                              Height="50"
                              Foreground="White"
                              FontSize="14" 
                              Style="{StaticResource MenuButtonTheme}"/>
-            </StackPanel>
+                </StackPanel>
+                <!-- left bottom ad -->
+                <Grid Grid.Row="1" Grid.Column="0" >
+
+                    <Grid x:Name="Github" Margin="0,18,0,22" MouseLeftButtonDown="Github_MouseLeftButtonDown">
+                        <materialDesign:PackIcon Kind="Github" Height="20" Width="20" 
+                                        Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="40,2,0,10" 
+                                Text="点个Star &lt;3" FontSize="16" Opacity="0.8"
+                                Foreground="White" FontWeight="Bold" >
+                        </TextBlock>
+                    </Grid>
+
+                    <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10,0,0,5" 
+                                   Text="V1.0.0" FontSize="14" Opacity="0.6"
+                                   Foreground="White" >
+                    </TextBlock>
+                </Grid>
+            </Grid>
 
             <!-- Exit button -->
             <materialDesign:PackIcon Kind="CloseCircleOutline" Grid.Row="0" Grid.Column="1"
@@ -79,19 +104,14 @@
                     </Style>
                 </Grid.Style>
 
-                <TextBlock Text="User Guide"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Margin="246,10,234,293"
-                       FontSize="22"
-                       Foreground="White" FontWeight="Bold" Width="150"/>
 
-                <TextBlock Text="Click the left top logo to move the window.&#x0a;Toggle the start in Setting page to start.&#x0a;You can move the slider to set the shift.&#x0a;Click the spell img to begin time counter.&#x0a;&#x0a; To Type:&#x0a;press enter in game, when the chat box showed&#x0a;up , press '+' and this program will autotype ,&#x0a;after that you need to press enter again to send."
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Left"
-                       Margin="64,42,0,35"
-                       FontSize="22"
-                       Foreground="White" Width="527" Height="253"/>
+                <TextBox Text="1、点击左上角的图标可以移动此窗口，在计时界面可以拖动透明部分移动窗口。&#x0a;2、在设置页点击开始启动软件。&#x0a;3、移动滑动条来设置shift的值(实际交技能时间和记下时间的间隔)。&#x0a;4、点击技能图标开始计时。&#x0a;5、！！！特别注意！！！&#x0a;在计分板tab界面设置好对面五人的位置后再启动软件(按照上野中下辅的顺序),游戏过程中不要交换计分板里玩家的顺序，否则重新到此界面开启软件。&#x0a;6、必须使用管理员运行，否则打字会失效。&#x0a;7、前几次使用时初始化和响应会比较慢，建议自定义先试几次。&#x0a;8、只支持5V5模式。&#x0a;&#x0a; 关于聊天框打字:&#x0a;手动按一次回车打开聊天框,然后点击小键盘上的加号,等软件自动输入完成后再按一次回车发送消息。&#x0a;&#x0a;&#x0a;By MrDragon"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    FontSize="18"  Margin="10,10,0,28"
+                    Foreground="White" Width="610" Height="292" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible"/>
+
+
 
             </Grid>
 
@@ -127,14 +147,14 @@
               IsChecked="False" RenderTransformOrigin="0.5,0.5" 
                 Checked="SpellTrackerToggle_Checked"
                 Unchecked="SpellTrackerToggle_Unchecked" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                <TextBlock Text="Start/Stop" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
+                <TextBlock Text="启动/关闭" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
 
                 <ToggleButton x:Name="FTOnly" Grid.Column="0" Grid.Row="2"
               Style="{StaticResource MaterialDesignSwitchToggleButton}"
               ToolTip="MaterialDesignSwitchToggleButton"
               IsChecked="True" RenderTransformOrigin="0.5,0.5" 
                     Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                <TextBlock Text="Flash TP Only" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
+                <TextBlock Text="只发闪现和传送cd" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
 
                 <Slider x:Name="Slider_Shift" Grid.Column="1" Grid.Row="1" BorderThickness="4"
               TickFrequency="1"
@@ -151,7 +171,7 @@
               ToolTip="MaterialDesignSwitchToggleButton"
               IsChecked="False" RenderTransformOrigin="0.5,0.5" 
                 Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                <TextBlock Text="SpellTrackerToggle4" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
+                <TextBlock Text="别点我！" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
             </Grid>
         </Grid>
     </Border>

@@ -54,7 +54,7 @@ namespace SpellTracker
             Log.Info("---------------Start SpellTracker-----------------");
             await Init();
             Log.Info("Init data successfully!");
-            InitButtonText.Text = "Please start the game first.";
+            InitButtonText.Text = "确保进入游戏了再点我";
             IsInit = true;
         }
 

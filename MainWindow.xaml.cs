@@ -109,5 +109,10 @@ namespace SpellTracker
         {
             this.Close();
         }
+
+        private void Github_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            try { System.Diagnostics.Process.Start("https://github.com/MrDragon1/SpellTracker"); } catch { }
+        }
     }
 }
