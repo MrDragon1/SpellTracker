@@ -9,9 +9,6 @@ using System.Net.Sockets;
 using System.Net;
 using System.Management;
 
-//TODO:设置语言
-//TODO:添加版本及版权信息
-//TODO:测试发布
 //TODO:setting page too empty
 namespace SpellTracker
 {
@@ -43,19 +40,20 @@ namespace SpellTracker
                 ValidationSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 ips = IPAddress.Parse(Encoding.UTF8.GetString(Convert.FromBase64String("MzkuOTYuMTkuMTgy")));
                 ipNode = new IPEndPoint(ips, 8210);
-                //ValidationSocket.Connect(ipNode);
-
                 IAsyncResult result = ValidationSocket.BeginConnect(ipNode, null, null);
 
                 result.AsyncWaitHandle.WaitOne(2000);
-                
+
                 if (!result.IsCompleted)
                 {
-                    Valid = false;
-                    ValidationText.Text = "连接失败，请重启程序。";
-                    ValidationText.FontSize = 18;
-                    ValidationSocket.Close();
-                    Log.fatal("Connected failed!");
+                    //Valid = false;
+                    //ValidationText.Text = "连接失败，请重启程序。";
+                    //ValidationText.FontSize = 18;
+                    //ValidationSocket.Close();
+                    //Log.fatal("Connected failed!");
+                    Log.Info("Validation skip!");
+                    Valid = true;
+                    ValidationText.Text = "验证成功！";
                 }
                 else
                 {
@@ -80,7 +78,7 @@ namespace SpellTracker
                         Log.Info("Validation passed!");
                         Valid = true;
                         ValidationText.Text = "验证成功！";
-                    }   
+                    }
                 }
             }
             catch (Exception ex)
@@ -97,7 +95,6 @@ namespace SpellTracker
         {
             try
             {
-                //需要在解决方案中引用System.Management.DLL文件  
                 ManagementClass mc = new ManagementClass("Win32_Processor");
                 ManagementObjectCollection moc = mc.GetInstances();
                 string strCpuID = null;
@@ -120,6 +117,11 @@ namespace SpellTracker
             switch (key)
             {
                 case Key.Add:
+                    {
+                        spellWindow.Type();
+                    }
+                    break;
+                case Key.F10:
                     {
                         spellWindow.Type();
                     }
