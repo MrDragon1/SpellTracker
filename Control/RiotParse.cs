@@ -309,8 +309,8 @@ namespace SpellTracker.Control
                         level.Add((int)Convert.ToSingle(p.level));
                     }
                 }
-                Log.Info("tp cd:" + (420 - 10 * level[id / 2] - shift).ToString());
-                SpellTotalTime[id] = 420 - 10 * level[id / 2] - shift;
+                Log.Info("tp cd:" + (432 - 12 * level[id / 2] - shift).ToString());
+                SpellTotalTime[id] = 432 - 12 * level[id / 2] - shift;
                 return 432 - 12 * level[id / 2] - shift;
             }
             else

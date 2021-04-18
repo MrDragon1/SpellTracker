@@ -8,6 +8,7 @@ using SpellTracker.Control;
 using System.Net.Sockets;
 using System.Net;
 using System.Management;
+using Newtonsoft.Json;
 
 //TODO:setting page too empty
 namespace SpellTracker
@@ -35,56 +36,67 @@ namespace SpellTracker
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
             Log.Info("===============Start log=================");
 
-            try
+            ValidJson json = JsonConvert.DeserializeObject<ValidJson>(System.IO.File.ReadAllText(@"valid.json"));
+
+            if (json.IfValid)
             {
-                ValidationSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                ips = IPAddress.Parse(Encoding.UTF8.GetString(Convert.FromBase64String("MzkuOTYuMTkuMTgy")));
-                ipNode = new IPEndPoint(ips, 8210);
-                IAsyncResult result = ValidationSocket.BeginConnect(ipNode, null, null);
-
-                result.AsyncWaitHandle.WaitOne(2000);
-
-                if (!result.IsCompleted)
+                try
                 {
-                    //Valid = false;
-                    //ValidationText.Text = "连接失败，请重启程序。";
-                    //ValidationText.FontSize = 18;
-                    //ValidationSocket.Close();
-                    //Log.fatal("Connected failed!");
-                    Log.Info("Validation skip!");
-                    Valid = true;
-                    ValidationText.Text = "验证成功！";
-                }
-                else
-                {
-                    string rl = System.Environment.GetEnvironmentVariable("ComputerName");
-                    //发送消息到服务端
-                    rl = rl + "_" + Get_CPUID();
-                    ValidationSocket.Send(Encoding.UTF8.GetBytes(rl));
-                    byte[] buffer = new byte[1024];
-                    int num = ValidationSocket.Receive(buffer);
-                    string str = Encoding.UTF8.GetString(buffer, 0, num);
-                    ValidationSocket.Disconnect(false);
-                    if (str != rl)
+                    ValidationSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    ips = IPAddress.Parse(Encoding.UTF8.GetString(Convert.FromBase64String("MzkuOTYuMTkuMTgy")));
+                    ipNode = new IPEndPoint(ips, 8210);
+                    IAsyncResult result = ValidationSocket.BeginConnect(ipNode, null, null);
+
+                    result.AsyncWaitHandle.WaitOne(2000);
+
+                    if (!result.IsCompleted)
                     {
-                        Valid = false;
-                        ValidationText.Text = "验证失败，请重启程序。";
-                        ValidationText.FontSize = 18;
-                        ValidationSocket.Close();
-                        Log.fatal("Validation failed!");
-                    }
-                    else
-                    {
-                        Log.Info("Validation passed!");
+                        //Valid = false;
+                        //ValidationText.Text = "连接失败，请重启程序。";
+                        //ValidationText.FontSize = 18;
+                        //ValidationSocket.Close();
+                        //Log.fatal("Connected failed!");
+                        Log.Info("Validation skip!");
                         Valid = true;
                         ValidationText.Text = "验证成功！";
                     }
+                    else
+                    {
+                        string rl = System.Environment.GetEnvironmentVariable("ComputerName");
+                        //发送消息到服务端
+                        rl = rl + "_" + Get_CPUID();
+                        ValidationSocket.Send(Encoding.UTF8.GetBytes(rl));
+                        byte[] buffer = new byte[1024];
+                        int num = ValidationSocket.Receive(buffer);
+                        string str = Encoding.UTF8.GetString(buffer, 0, num);
+                        ValidationSocket.Disconnect(false);
+                        if (str != rl)
+                        {
+                            Valid = false;
+                            ValidationText.Text = "验证失败，请重启程序。";
+                            ValidationText.FontSize = 18;
+                            ValidationSocket.Close();
+                            Log.fatal("Validation failed!");
+                        }
+                        else
+                        {
+                            Log.Info("Validation passed!");
+                            Valid = true;
+                            ValidationText.Text = "验证成功！";
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.fatal("Connected Error!" + ex.Message);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Log.fatal("Connected Error!" + ex.Message);
+                Valid = true;
+                        ValidationText.Text = "验证成功！";
             }
+            
 
             _keyboardHook = new KeyBoardHook();
             _keyboardHook.SetHook();
@@ -191,5 +203,9 @@ namespace SpellTracker
             try { System.Diagnostics.Process.Start("https://github.com/MrDragon1/SpellTracker"); } catch { }
         }
 
+    }
+    public class ValidJson
+    {
+        public bool IfValid { get; set; }
     }
 }
