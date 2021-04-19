@@ -13,7 +13,7 @@
 + 支持所有5v5召唤师峡谷
 
 ## 功能展示：
-
+视频展示：https://www.bilibili.com/video/BV1nQ4y1Z7D2
 ![](https://media.giphy.com/media/y7c5Ndu0LIsCMtkwIz/giphy.gif)
 
 ## 注意事项：
