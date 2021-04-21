@@ -36,93 +36,13 @@ namespace SpellTracker
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
             Log.Info("===============Start log=================");
 
-            ValidJson json = JsonConvert.DeserializeObject<ValidJson>(System.IO.File.ReadAllText(@"valid.json"));
-
-            if (json.IfValid)
-            {
-                try
-                {
-                    ValidationSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    ips = IPAddress.Parse(Encoding.UTF8.GetString(Convert.FromBase64String("MzkuOTYuMTkuMTgy")));
-                    ipNode = new IPEndPoint(ips, 8210);
-                    IAsyncResult result = ValidationSocket.BeginConnect(ipNode, null, null);
-
-                    result.AsyncWaitHandle.WaitOne(2000);
-
-                    if (!result.IsCompleted)
-                    {
-                        //Valid = false;
-                        //ValidationText.Text = "连接失败，请重启程序。";
-                        //ValidationText.FontSize = 18;
-                        //ValidationSocket.Close();
-                        //Log.fatal("Connected failed!");
-                        Log.Info("Validation skip!");
-                        Valid = true;
-                        ValidationText.Text = "验证成功！";
-                    }
-                    else
-                    {
-                        string rl = System.Environment.GetEnvironmentVariable("ComputerName");
-                        //发送消息到服务端
-                        rl = rl + "_" + Get_CPUID();
-                        ValidationSocket.Send(Encoding.UTF8.GetBytes(rl));
-                        byte[] buffer = new byte[1024];
-                        int num = ValidationSocket.Receive(buffer);
-                        string str = Encoding.UTF8.GetString(buffer, 0, num);
-                        ValidationSocket.Disconnect(false);
-                        if (str != rl)
-                        {
-                            Valid = false;
-                            ValidationText.Text = "验证失败，请重启程序。";
-                            ValidationText.FontSize = 18;
-                            ValidationSocket.Close();
-                            Log.fatal("Validation failed!");
-                        }
-                        else
-                        {
-                            Log.Info("Validation passed!");
-                            Valid = true;
-                            ValidationText.Text = "验证成功！";
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.fatal("Connected Error!" + ex.Message);
-                }
-            }
-            else
-            {
-                Valid = true;
-                        ValidationText.Text = "验证成功！";
-            }
-            
+            Valid = true;
+            ValidationText.Text = "验证成功！";
 
             _keyboardHook = new KeyBoardHook();
             _keyboardHook.SetHook();
             _keyboardHook.SetOnKeyDownEvent(Win32_Keydown);
         }
-
-        public static string Get_CPUID()
-        {
-            try
-            {
-                ManagementClass mc = new ManagementClass("Win32_Processor");
-                ManagementObjectCollection moc = mc.GetInstances();
-                string strCpuID = null;
-                foreach (ManagementObject mo in moc)
-                {
-                    strCpuID = mo.Properties["ProcessorId"].Value.ToString();
-                    mo.Dispose();
-                    break;
-                }
-                return strCpuID;
-            }
-            catch
-            {
-                return "";
-            }
-        }  
 
         private void Win32_Keydown(Key key)
         {
