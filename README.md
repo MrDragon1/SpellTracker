@@ -3,8 +3,8 @@
 一款基于C#实现的lol召唤师技能计时软件，并且能够发送冷却时间。[点击下载最新版](https://github.com/MrDragon1/SpellTracker/releases)
 
 网盘地址：
-链接：https://pan.baidu.com/s/11EUoOanJhmygZuvv_8IuEA 
-提取码：chjt 
+链接：https://pan.baidu.com/s/1IIfUUNa0XzQ7IlI4rI64MQ 
+提取码：gejj 
 复制这段内容后打开百度网盘手机App，操作更方便哦
 
 ## 基本功能：
