@@ -1,25 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WebSocketSharp;
 using System.Diagnostics;
 using SpellTracker.Control;
-using SpellTracker.Data;
-using log4net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Threading;
 
 namespace SpellTracker
 {
@@ -39,13 +26,15 @@ namespace SpellTracker
         public int shift;
         public bool FlashOnly;
 
-        public SpellWindow(int shift = 10,bool FlashOnly = true)
+        public SpellWindow(int shift = 10,bool FlashOnly = true,int width = 236,int height = 95)
         {
             InitializeComponent();
             SpellGrid.Visibility = Visibility.Hidden;
             InitButton.Visibility = Visibility.Visible;
             this.shift = shift;
             this.FlashOnly = FlashOnly;
+            this.Width = width;
+            this.Height = height;
         }
 
         private async void Main_Load(object sender, RoutedEventArgs e)

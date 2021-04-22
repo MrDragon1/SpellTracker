@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 
 //TODO:setting page too empty
 //TODO:竖向排列
-//TODO:缩放大小
 namespace SpellTracker
 {
     /// <summary>
@@ -60,7 +59,7 @@ namespace SpellTracker
                     Slider_Shift.Value = json.shift;
                 }
                 FTOnly.IsChecked = json.FTOnly;
-
+                
                 Valid = true;
                 ValidationText.Text = "初始化完成！";
             }
@@ -89,16 +88,11 @@ namespace SpellTracker
         {
             if (Valid)
             {
-                spellWindow = new SpellWindow((int)Slider_Shift.Value, (bool)FTOnly.IsChecked);
+                spellWindow = new SpellWindow((int)Slider_Shift.Value, (bool)FTOnly.IsChecked,json.Win_width,json.Win_height);
                 spellWindow.Show();
                 Slider_Shift.IsEnabled = false;
                 FTOnly.IsEnabled = false;
             }
-            else
-            {
-                //TODO:应该强调validation fail
-            }
-
         }
 
         private void SpellTrackerToggle_Unchecked(object sender, RoutedEventArgs e)
@@ -188,5 +182,7 @@ namespace SpellTracker
         public uint HotKey_Key { get; set; }
         public bool FTOnly { get; set; }
         public int shift { get; set; }
+        public int Win_width { get; set; }
+        public int Win_height { get; set; }
     }
 }

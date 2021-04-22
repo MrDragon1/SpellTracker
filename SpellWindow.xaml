@@ -21,78 +21,87 @@
     <Window.Background>
         <SolidColorBrush Opacity="0.01" Color="#000000"></SolidColorBrush>
     </Window.Background>
+    
+    <Viewbox Stretch="Fill">
+        <Canvas Width="672" Height="267">
+            <Grid Margin="0,0,0,0">
 
-    <Grid Margin="0,0,-435,-163">
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
 
-        <Grid.RenderTransform>
-            <TransformGroup>
-                <ScaleTransform ScaleX="0.35" ScaleY="0.35"/>
-                <SkewTransform/>
-                <RotateTransform/>
-                <TranslateTransform/>
-            </TransformGroup>
-        </Grid.RenderTransform>
-
-        <Button x:Name="InitButton" Visibility="Visible"
+                <Button x:Name="InitButton" Visibility="Visible"
         Style="{StaticResource MaterialDesignRaisedButton}"
         materialDesign:ButtonAssist.CornerRadius="20"
-        ToolTip="点我启动确保已经进入游戏，不是客户端界面" Height="Auto" Margin="135,79,103,79"
+        ToolTip="点我启动确保已经进入游戏，不是客户端界面" Height="Auto" 
+                        Canvas.Left="135"
+                        Canvas.Top="79"
+                        Margin="135,79,103,79"
                 Click="InitButton_Click">
-            <TextBlock x:Name="InitButtonText"
+                    <TextBlock x:Name="InitButtonText"
             Text="正在初始化 ..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="28" FontWeight="Bold" />
-        </Button>
+                </Button>
 
 
-        <Grid x:Name="SpellGrid" ShowGridLines="False" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" Height="238" VerticalAlignment="Bottom" Margin="5,0,-1,10">
+                <Grid x:Name="SpellGrid" ShowGridLines="False" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" Height="238" VerticalAlignment="Bottom" Margin="5,0,-1,10">
 
-            <Grid.RowDefinitions>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
 
-            <controls:FadeImage x:Name="SpellImage00" Grid.Row="0" Grid.Column="0"
+                    <controls:FadeImage x:Name="SpellImage00" Grid.Row="0" Grid.Column="0"
                                     MouseLeftButtonDown="SpellImage00_MouseLeftButtonDown"
                                     MouseLeftButtonUp="SpellImage00_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
-            <controls:FadeImage x:Name="SpellImage10" Grid.Row="0" Grid.Column="1"
+                    <controls:FadeImage x:Name="SpellImage10" Grid.Row="0" Grid.Column="1"
                                     MouseLeftButtonDown="SpellImage10_MouseLeftButtonDown"
                                     MouseLeftButtonUp="SpellImage10_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
-            <controls:FadeImage x:Name="SpellImage20" Grid.Row="0" Grid.Column="2"
+                    <controls:FadeImage x:Name="SpellImage20" Grid.Row="0" Grid.Column="2"
                                     MouseLeftButtonDown="SpellImage20_MouseLeftButtonDown"
                                     MouseLeftButtonUp="SpellImage20_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
-            <controls:FadeImage x:Name="SpellImage30" Grid.Row="0" Grid.Column="3"
+                    <controls:FadeImage x:Name="SpellImage30" Grid.Row="0" Grid.Column="3"
                                     MouseLeftButtonDown="SpellImage30_MouseLeftButtonDown"
                                     MouseLeftButtonUp="SpellImage30_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
-            <controls:FadeImage x:Name="SpellImage40" Grid.Row="0" Grid.Column="4"
+                    <controls:FadeImage x:Name="SpellImage40" Grid.Row="0" Grid.Column="4"
                                     MouseLeftButtonDown="SpellImage40_MouseLeftButtonDown"
                                     MouseLeftButtonUp="SpellImage40_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
 
 
-            <controls:FadeImage x:Name="SpellImage01"
+                    <controls:FadeImage x:Name="SpellImage01"
                                     MouseLeftButtonDown="SpellImage01_MouseLeftButtonDown" Grid.Row="1" Grid.Column="0"
                                     MouseLeftButtonUp="SpellImage01_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
-            <controls:FadeImage x:Name="SpellImage11"
+                    <controls:FadeImage x:Name="SpellImage11"
                                     MouseLeftButtonDown="SpellImage11_MouseLeftButtonDown" Grid.Row="1" Grid.Column="1"
                                     MouseLeftButtonUp="SpellImage11_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
-            <controls:FadeImage x:Name="SpellImage21"
+                    <controls:FadeImage x:Name="SpellImage21"
                                     MouseLeftButtonDown="SpellImage21_MouseLeftButtonDown" Grid.Row="1" Grid.Column="2"
                                     MouseLeftButtonUp="SpellImage21_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
-            <controls:FadeImage x:Name="SpellImage31"
+                    <controls:FadeImage x:Name="SpellImage31"
                                     MouseLeftButtonDown="SpellImage31_MouseLeftButtonDown" Grid.Row="1" Grid.Column="3"
                                     MouseLeftButtonUp="SpellImage31_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
-            <controls:FadeImage x:Name="SpellImage41"
+                    <controls:FadeImage x:Name="SpellImage41"
                                     MouseLeftButtonDown="SpellImage41_MouseLeftButtonDown" Grid.Row="1" Grid.Column="4"
                                     MouseLeftButtonUp="SpellImage41_MouseLeftButtonUp" Source="img/SummonerFlash.png" Height="107" Width="120" />
 
-        </Grid>
+                </Grid>
 
-        <Border BorderBrush="#FFD6700A" BorderThickness="5" HorizontalAlignment="Left" Height="267" Margin="0,0,-60,-16" VerticalAlignment="Top" Width="672" CornerRadius="20"/>
+                <Border BorderBrush="#FFD6700A" BorderThickness="5" HorizontalAlignment="Left" Height="267" Margin="0,0,0,0" VerticalAlignment="Top" Width="672" CornerRadius="20"/>
 
-    </Grid>
+            </Grid>
+        </Canvas>
+    </Viewbox>
+    
+    
 </Window>
