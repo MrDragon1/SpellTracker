@@ -43,37 +43,41 @@
 
             <Grid Grid.Row="1" Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="141*"></RowDefinition>
-                    <RowDefinition Height="34*"></RowDefinition>
+                    <RowDefinition Height="53*"></RowDefinition>
+                    <RowDefinition Height="17*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <!-- left menu -->
                 <StackPanel Grid.Row="0" Grid.Column="0" >
                     <RadioButton x:Name="Guide"  Content="使用说明"
                              Height="50" 
-                             Foreground="White"
+                             Foreground="White" IsChecked="True"
                              FontSize="14"
-                             IsChecked="True"
                              Style="{StaticResource MenuButtonTheme}"/>
                     <RadioButton x:Name="Setting" Content="设置"
                              Height="50"
-                             Foreground="White"
+                             Foreground="White" 
                              FontSize="14" 
                              Style="{StaticResource MenuButtonTheme}"/>
                 </StackPanel>
                 <!-- left bottom ad -->
                 <Grid Grid.Row="1" Grid.Column="0" >
 
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,10,0,56" 
+                                Text="QQ群：821237754" FontSize="14" Opacity="0.8"
+                                Foreground="White" FontWeight="Bold" >
+                    </TextBlock>
+
                     <Grid x:Name="Github" Margin="0,18,0,22" MouseLeftButtonDown="Github_MouseLeftButtonDown">
                         <materialDesign:PackIcon Kind="Github" Height="20" Width="20" 
-                                        Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
-                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="40,2,0,10" 
+                                        Margin="10,16,0,0" Foreground="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="44,17,0,9" 
                                 Text="点个Star &lt;3" FontSize="16" Opacity="0.8"
                                 Foreground="White" FontWeight="Bold" >
                         </TextBlock>
                     </Grid>
 
                     <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10,0,0,5" 
-                                   Text="V1.0.0  By MrDragon" FontSize="14" Opacity="0.6"
+                                   Text="V1.0.1  By MrDragon" FontSize="14" Opacity="0.6"
                                    Foreground="White" >
                     </TextBlock>
                 </Grid>
@@ -105,13 +109,11 @@
                 </Grid.Style>
 
 
-                <TextBox Text="1、点击左上角的图标可以移动此窗口，在计时界面可以拖动透明部分移动窗口。&#x0a;2、在设置页点击开始启动软件。&#x0a;3、移动滑动条来设置shift的值(实际交技能时间和记下时间的间隔)。&#x0a;4、点击技能图标开始计时。&#x0a;5、！！！特别注意！！！&#x0a;在计分板tab界面设置好对面五人的位置后再启动软件(按照上野中下辅的顺序),游戏过程中不要交换计分板里玩家的顺序，否则重新到此界面开启软件。&#x0a;6、必须使用管理员运行，否则打字会失效。&#x0a;7、前几次使用时初始化和响应会比较慢，建议自定义先试几次。&#x0a;8、只支持5V5模式。&#x0a;9、觉得好用可以在github点个star。&#x0a;&#x0a; 关于聊天框打字:&#x0a;手动按一次回车打开聊天框,然后点击F10或者小键盘上的加号,等软件自动输入完成后再按一次回车发送消息。&#x0a;&#x0a;&#x0a;By MrDragon"
+                <TextBox Text="1、点击左上角的图标可以移动此窗口，在计时界面可以拖动透明部分移动窗口。&#x0a;2、在设置页点击开始启动软件。&#x0a;3、移动滑动条来设置shift的值(实际交技能时间和记下时间的间隔)。&#x0a;4、点击技能图标开始计时。&#x0a;5、！！！特别注意！！！&#x0a;在计分板tab界面设置好对面五人的位置后再启动软件(按照上野中下辅的顺序),游戏过程中不要交换计分板里玩家的顺序，否则重新到此界面开启软件。&#x0a;6、必须使用管理员运行，否则打字会失效。&#x0a;7、前几次使用时初始化和响应会比较慢，建议自定义先试几次。&#x0a;8、只支持5V5模式。&#x0a;9、设置快捷键时必须使用英文输入法，且不能设置组合键。&#x0a;10、觉得好用可以在github点个star。&#x0a;&#x0a; 关于聊天框打字:&#x0a;手动按一次回车打开聊天框,然后点击设置好的快捷键,等软件自动输入完成后再按一次回车发送消息。&#x0a;&#x0a;&#x0a;By MrDragon"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Left"
                     FontSize="18"  Margin="10,10,0,28"
                     Foreground="White" Width="610" Height="292" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible"/>
-
-
 
             </Grid>
 
@@ -130,14 +132,15 @@
                         </Style.Triggers>
                     </Style>
                 </Grid.Style>
-                
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
 
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="165"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
@@ -167,12 +170,21 @@
                 <TextBlock Text="{Binding Value,ElementName=Slider_Shift}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="0"/>
 
 
-                <ToggleButton x:Name="Validation" Grid.Column="1" Grid.Row="2"
+                <ToggleButton x:Name="Validation" Grid.Column="1" Grid.Row="3"
               Style="{StaticResource MaterialDesignSwitchToggleButton}"
               ToolTip="MaterialDesignSwitchToggleButton"
               IsChecked="False" RenderTransformOrigin="0.5,0.5" Visibility="Hidden"
                 Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                <TextBlock x:Name="ValidationText" Text="验证中..." Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
+                <TextBlock x:Name="ValidationText" Text="启动中..." Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
+
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0,0,0"
+                         Text="快捷键：" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" 
+                           Foreground="White" FontWeight="Bold" />
+                <TextBox x:Name="HotKey" Grid.Row="3" Grid.Column="0" Margin="90,0,0,0"
+                         Text="test" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" 
+                           Foreground="White" 
+                         KeyDown="HotKey_KeyDown" MinWidth="70" />
             </Grid>
         </Grid>
     </Border>

@@ -276,9 +276,8 @@ namespace SpellTracker.Control
                     if (SpellTime[i] > 0) str += pos[i] + GetSpellShortName(summonerSpell[i]) + GetTimeInMinute(GameTime + SpellTime[i]) + (" ");
                 }
             }
-            typestr = str;
+           typestr = str;
         }
-
         //返回按分秒显示的冷却时间
         private string GetTimeInMinute(int time)
         {

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using WebSocketSharp;
-using System.Diagnostics;
 using SpellTracker.Control;
-using System.Net.Sockets;
-using System.Net;
-using System.Management;
 using Newtonsoft.Json;
 
 //TODO:setting page too empty
+//TODO:竖向排列
+//TODO:缩放大小
 namespace SpellTracker
 {
     /// <summary>
@@ -19,12 +15,9 @@ namespace SpellTracker
     public partial class MainWindow : Window
     {
         public SpellWindow spellWindow;
-
         KeyBoardHook _keyboardHook;
-        private Socket ValidationSocket;
-        private IPAddress ips;
-        private IPEndPoint ipNode;
         private bool Valid = false;
+        ConfigJson json;
         public MainWindow()
         {
             InitializeComponent();
@@ -36,30 +29,62 @@ namespace SpellTracker
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
             Log.Info("===============Start log=================");
 
-            Valid = true;
-            ValidationText.Text = "验证成功！";
+            /*read json file*/
+            try
+            {
+                json = JsonConvert.DeserializeObject<ConfigJson>(System.IO.File.ReadAllText(@"config.json"));
+            }
+            catch
+            {
+                Log.error("Open json failed!");
+                ValidationText.Text = "读取config文件失败！";
+            }
 
-            _keyboardHook = new KeyBoardHook();
-            _keyboardHook.SetHook();
-            _keyboardHook.SetOnKeyDownEvent(Win32_Keydown);
+            /*init user config*/
+            try
+            {
+                _keyboardHook = new KeyBoardHook();
+                _keyboardHook.SetHook();
+                _keyboardHook.SetOnKeyDownEvent(Win32_Keydown);
+                if (json.HotKey_Key != 0)
+                {
+                    HotKey.Text = ((Key)json.HotKey_Key).ToString();
+                }
+                else
+                {
+                    HotKey.Text = "点击设置快捷键";
+                    ValidationText.Text = "快捷键未设置！";
+                }
+                if(json.shift >= Slider_Shift.Minimum && json.shift <= Slider_Shift.Maximum)
+                {
+                    Slider_Shift.Value = json.shift;
+                }
+                FTOnly.IsChecked = json.FTOnly;
+
+                Valid = true;
+                ValidationText.Text = "初始化完成！";
+            }
+            catch
+            {
+                Log.error("Hotkey init error!");
+            }
+            
         }
-
         private void Win32_Keydown(Key key)
         {
-            switch (key)
+            if(key == (Key)json.HotKey_Key)
             {
-                case Key.Add:
-                    {
-                        spellWindow.Type();
-                    }
-                    break;
-                case Key.F10:
-                    {
-                        spellWindow.Type();
-                    }
-                    break;
+                try
+                {
+                    spellWindow.Type();
+                }
+                catch
+                {
+                    ValidationText.Text = "请先启动软件！";
+                }
             }
         }
+
         private void SpellTrackerToggle_Checked(object sender, RoutedEventArgs e)
         {
             if (Valid)
@@ -94,8 +119,7 @@ namespace SpellTracker
             {
                 spellWindow.Close();
             }
-            _keyboardHook.UnHook();
-            Log.Info("UnHooked");
+            //Log.Info("UnHooked");
             Log.Info("===============End log=================");
         }
 
@@ -123,9 +147,46 @@ namespace SpellTracker
             try { System.Diagnostics.Process.Start("https://github.com/MrDragon1/SpellTracker"); } catch { }
         }
 
+        private void HotKey_KeyDown(object sender, KeyEventArgs e)
+        {
+            HotKey.Text = "";
+            //if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+            //{
+            //    mod |= HotkeyModifiers.MOD_CONTROL;
+            //}
+            //if (e.Key == Key.LeftAlt || e.Key == Key.RightAlt)
+            //{
+            //    mod |= HotkeyModifiers.MOD_ALT;
+            //}
+            //if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
+            //{
+            //    mod |= HotkeyModifiers.MOD_SHIFT;
+            //}
+            
+            //if(mod == HotkeyModifiers.MOD_CONTROL)
+            //{
+            //    Log.Info(((int)mod).ToString() + e.Key.ToString());
+            //}
+            try
+            {
+                json.HotKey_Key = (uint)e.Key;
+                string output = Newtonsoft.Json.JsonConvert.SerializeObject(json, Newtonsoft.Json.Formatting.Indented);
+                System.IO.File.WriteAllText(@"config.json", output);
+            }
+            catch
+            {
+                Log.error("Register HotKey error!");
+            }
+            HotKey.Text = ((Key)json.HotKey_Key).ToString();
+            Setting.Focus();
+        }
+
     }
-    public class ValidJson
+    public class ConfigJson
     {
-        public bool IfValid { get; set; }
+        public uint HotKey_Mod { get; set; }
+        public uint HotKey_Key { get; set; }
+        public bool FTOnly { get; set; }
+        public int shift { get; set; }
     }
 }
