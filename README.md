@@ -2,6 +2,11 @@
 
 一款基于C#实现的lol召唤师技能计时软件，并且能够发送冷却时间。[点击下载最新版](https://github.com/MrDragon1/SpellTracker/releases)
 
+网盘地址：
+链接：https://pan.baidu.com/s/1IIfUUNa0XzQ7IlI4rI64MQ 
+提取码：gejj 
+复制这段内容后打开百度网盘手机App，操作更方便哦
+
 ## 基本功能：
 
 + 能够在进入游戏后自动读取对面的召唤师技能，显示在计时界面上
@@ -13,6 +18,8 @@
 + 支持所有5v5召唤师峡谷
 
 ## 功能展示：
+视频展示：https://www.bilibili.com/video/BV1nQ4y1Z7D2
+
 
 ![](https://media.giphy.com/media/y7c5Ndu0LIsCMtkwIz/giphy.gif)
 
@@ -26,14 +33,13 @@
 
 + 前几次运行时会比较卡顿，因为相关的数据需要下载到本地，使用几次后就正常了
 
-+ 每次启动软件时会向服务器发送信息，便于统计使用时间和使用次数
-
-  如不想发送可以选择修改valid.json文件中的IfValid为false
-
 + 软件后续的更新会首先在这里放出，需要新版本的可以关注一下。
 
 
-
+## 联系方式：
+ QQ群：821237754
+ 
+ 
 如果你觉得这个软件对你有帮助的话，不妨点一下右上角的star！⭐⭐
 
 开发不易，感谢！❤❤❤
