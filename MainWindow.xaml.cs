@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Input;
 using SpellTracker.Control;
 using Newtonsoft.Json;
+using System.Windows.Media;
+using System.Configuration;
 
 //TODO:setting page too empty
 //TODO:竖向排列
@@ -67,7 +69,8 @@ namespace SpellTracker
             {
                 Log.error("Hotkey init error!");
             }
-            
+            VersionBlock.Text = "V"+ ConfigurationManager.AppSettings["sysversion"].ToString() + "   By MrDragon";
+
         }
         private void Win32_Keydown(Key key)
         {
@@ -83,15 +86,26 @@ namespace SpellTracker
                 }
             }
         }
-
+       
         private void SpellTrackerToggle_Checked(object sender, RoutedEventArgs e)
         {
             if (Valid)
             {
-                spellWindow = new SpellWindow((int)Slider_Shift.Value, (bool)FTOnly.IsChecked,json.Win_width,json.Win_height);
+                int flashPos = 0;
+                if ((bool)DFlash_ToggleButton.IsChecked) flashPos = 1;
+                else if ((bool)FFlash_ToggleButton.IsChecked) flashPos = 2;
+                spellWindow = new SpellWindow(
+                    (int)Slider_Shift.Value, (bool)FTOnly.IsChecked,
+                    json.Win_width,json.Win_height,
+                    flashPos
+                    );
+
                 spellWindow.Show();
                 Slider_Shift.IsEnabled = false;
                 FTOnly.IsEnabled = false;
+                FFlash_ToggleButton.IsEnabled = false;
+                DefaultFlash_ToggleButton.IsEnabled = false;
+                DFlash_ToggleButton.IsEnabled = false;
             }
         }
 
@@ -103,6 +117,9 @@ namespace SpellTracker
                 spellWindow = null;
                 Slider_Shift.IsEnabled = true;
                 FTOnly.IsEnabled = true;
+                FFlash_ToggleButton.IsEnabled = true;
+                DefaultFlash_ToggleButton.IsEnabled = true;
+                DFlash_ToggleButton.IsEnabled = true;
             }
         }
 
@@ -175,6 +192,39 @@ namespace SpellTracker
             Setting.Focus();
         }
 
+        private void DefaultFlash_ToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                FFlash_ToggleButton.IsChecked = false;
+                DFlash_ToggleButton.IsChecked = false;
+                DefaultFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(24,234,243));
+                FFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(0x34,0x9f,0xda));
+                DFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(0x34, 0x9f, 0xda));
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void DFlash_ToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            FFlash_ToggleButton.IsChecked = false;
+            DefaultFlash_ToggleButton.IsChecked = false;
+            DFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(24, 234, 243));
+            FFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(0x34, 0x9f, 0xda));
+            DefaultFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(0x34, 0x9f, 0xda));
+        }
+
+        private void FFlash_ToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            DefaultFlash_ToggleButton.IsChecked = false;
+            DFlash_ToggleButton.IsChecked = false;
+            FFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(24, 234, 243));
+            DFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(0x34, 0x9f, 0xda));
+            DefaultFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(0x34, 0x9f, 0xda));
+        }
     }
     public class ConfigJson
     {

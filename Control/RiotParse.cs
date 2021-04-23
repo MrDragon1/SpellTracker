@@ -36,6 +36,7 @@ namespace SpellTracker.Control
         public string playerteam = "";
         public bool IsSync = false;
         public bool FlashOnly = true;
+        public int FlashPos = 0;
         public SummonerSpell[] spells;
         private readonly IDictionary<string, SummonerSpell > Dic = new ConcurrentDictionary<string, SummonerSpell>();
 
@@ -240,6 +241,17 @@ namespace SpellTracker.Control
                     summonerName.Add(p.summonerName);
                     summonerSpell[index++] = p.summonerSpells.summonerSpellOne.rawDisplayName.Split('_')[2];
                     summonerSpell[index++] = p.summonerSpells.summonerSpellTwo.rawDisplayName.Split('_')[2];
+                   
+                    if(FlashPos != 0)
+                    {
+                        if (summonerSpell[index - FlashPos] == "SummonerFlash")
+                        {
+                            var tmp = summonerSpell[index - 1];
+                            summonerSpell[index - 1] = summonerSpell[index - 2];
+                            summonerSpell[index - 2] = tmp;
+                        }
+                    }
+
                     championName.Add(p.championName);
                 }
             }

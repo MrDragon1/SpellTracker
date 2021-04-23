@@ -40,7 +40,6 @@
                        Foreground="White" FontFamily="Segoe Script" FontWeight="Bold"/>
             </Grid>
 
-
             <Grid Grid.Row="1" Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="53*"></RowDefinition>
@@ -76,8 +75,8 @@
                         </TextBlock>
                     </Grid>
 
-                    <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10,0,0,5" 
-                                   Text="V1.0.1  By MrDragon" FontSize="14" Opacity="0.6"
+                    <TextBlock x:Name="VersionBlock"  VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10,0,0,5" 
+                                   Text="V1.0.3  By MrDragon" FontSize="14" Opacity="0.6"
                                    Foreground="White" >
                     </TextBlock>
                 </Grid>
@@ -178,13 +177,74 @@
                 <TextBlock x:Name="ValidationText" Text="启动中..." Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
 
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0,0,0"
+
+
+                <Grid Grid.Row="3" Grid.Column="0" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="10,0,0,0"
                          Text="快捷键：" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" 
                            Foreground="White" FontWeight="Bold" />
-                <TextBox x:Name="HotKey" Grid.Row="3" Grid.Column="0" Margin="90,0,0,0"
+                    <TextBox x:Name="HotKey" Grid.Row="0" Grid.Column="0" Margin="90,0,0,0"
                          Text="test" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" 
                            Foreground="White" 
                          KeyDown="HotKey_KeyDown" MinWidth="70" />
+
+
+                    <Grid Grid.Row="0" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <Viewbox Stretch="Fill">
+                                <Canvas Height="50" Width="314">
+                                    <ToggleButton x:Name="DefaultFlash_ToggleButton"
+                                        Content="X"  Background="#FF18EAF3" 
+                                        Style="{StaticResource MaterialDesignActionLightToggleButton}"
+                                        IsChecked="True" Checked="DefaultFlash_ToggleButton_Checked"
+                                        ToolTip="MaterialDesignActionLightToggleButton" Canvas.Left="54" Canvas.Top="10" >
+                                    </ToggleButton>
+                                    <TextBlock Text="默认" FontSize="26" FontWeight="Bold" Foreground="#DDFFFFFF" Canvas.Left="113" Canvas.Top="13"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Viewbox Stretch="Fill">
+                                <Canvas Height="50" Width="314">
+                                    <ToggleButton x:Name="DFlash_ToggleButton"
+                                        Content="X"  Background="#FF349fda" 
+                                        Style="{StaticResource MaterialDesignActionLightToggleButton}"
+                                        IsChecked="False" Checked="DFlash_ToggleButton_Checked" 
+                                        ToolTip="MaterialDesignActionLightToggleButton" Canvas.Left="54" Canvas.Top="10">
+                                    </ToggleButton>
+                                    <TextBlock Text="D闪" FontSize="26" FontWeight="Bold" Foreground="#DDFFFFFF" Canvas.Left="113" Canvas.Top="13"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+
+                        <Grid Grid.Row="2">
+                            <Viewbox Stretch="Fill">
+                                <Canvas Height="50" Width="314">
+                                    <ToggleButton x:Name="FFlash_ToggleButton"
+                                        Content="X" Background="#FF349fda" 
+                                        Style="{StaticResource MaterialDesignActionLightToggleButton}"
+                                        IsChecked="False" Checked="FFlash_ToggleButton_Checked"
+                                        ToolTip="MaterialDesignActionLightToggleButton" Canvas.Left="54" Canvas.Top="10" >
+                                    </ToggleButton>
+                                    <TextBlock Text="F闪" FontSize="26" FontWeight="Bold" Foreground="#DDFFFFFF" Canvas.Left="113" Canvas.Top="13"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
     </Border>
