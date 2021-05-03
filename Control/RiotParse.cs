@@ -50,6 +50,8 @@ namespace SpellTracker.Control
             //验证服务器证书回调自动验证
             System.Net.ServicePointManager.ServerCertificateValidationCallback =
                          new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Reset();
         }
 
@@ -60,7 +62,6 @@ namespace SpellTracker.Control
             {
                 Dic[p.Key] = p;
             }
-            
         }
 
         private void Reset()
@@ -158,6 +159,7 @@ namespace SpellTracker.Control
 
         private string Get_UrlData(string url)
         {
+            Log.Info("In" + url);
             try
             {
                 string result = "";
@@ -178,28 +180,29 @@ namespace SpellTracker.Control
                 }
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
-                Log.error("wrong url : " + url );
+                Log.error("wrong url : " + url + ex);
                 return "";
             }
         }
 
         public async Task Parse()
         {
-
+            try
+            {
 #if DEBUG
-            string Url = "./gamestats.json";
-            RootObject_Gamestats gamestats = JsonConvert.DeserializeObject<RootObject_Gamestats>(System.IO.File.ReadAllText(Url));//Get_UrlData(Url)
-            GameTime = (int)Convert.ToSingle(gamestats.gameTime);
-            GameMode = gamestats.gameMode;
+                string Url = "./gamestats.json";
+                RootObject_Gamestats gamestats = JsonConvert.DeserializeObject<RootObject_Gamestats>(System.IO.File.ReadAllText(Url));//Get_UrlData(Url)
+                GameTime = (int)Convert.ToSingle(gamestats.gameTime);
+                GameMode = gamestats.gameMode;
 
-            Url = "./activeplayername.json";
-            PlayerName = System.IO.File.ReadAllText(Url).Replace("\"", "");
+                Url = "./activeplayername.json";
+                PlayerName = System.IO.File.ReadAllText(Url).Replace("\"", "");
 
-            Url = "./playerlist.json";
-            string result = "{\n\"Player\": " + System.IO.File.ReadAllText(Url) + "\n}";
-            RootObject_Playerlist playerlist = JsonConvert.DeserializeObject<RootObject_Playerlist>(result);
+                Url = "./playerlist.json";
+                string result = "{\n\"Player\": " + System.IO.File.ReadAllText(Url) + "\n}";
+                RootObject_Playerlist playerlist = JsonConvert.DeserializeObject<RootObject_Playerlist>(result);
 #else
             if (Process.GetProcessesByName("League of legends").Length == 0)
             {
@@ -221,47 +224,52 @@ namespace SpellTracker.Control
             RootObject_Playerlist playerlist = JsonConvert.DeserializeObject<RootObject_Playerlist>(result);
 #endif
 
-            foreach (Player p in playerlist.Player)
-            {
-                if (p.summonerName == PlayerName)
+                foreach (Player p in playerlist.Player)
                 {
-                    playerteam = p.team;
-                    break;
-                }
-            }
-            level.Clear();
-            summonerName.Clear();
-            championName.Clear();
-            int index = 0;
-            foreach (Player p in playerlist.Player)
-            {
-                if (p.team != playerteam)
-                {
-                    level.Add((int)Convert.ToSingle(p.level));
-                    summonerName.Add(p.summonerName);
-                    summonerSpell[index++] = p.summonerSpells.summonerSpellOne.rawDisplayName.Split('_')[2];
-                    summonerSpell[index++] = p.summonerSpells.summonerSpellTwo.rawDisplayName.Split('_')[2];
-                   
-                    if(FlashPos != 0)
+                    if (p.summonerName == PlayerName)
                     {
-                        if (summonerSpell[index - FlashPos] == "SummonerFlash")
-                        {
-                            var tmp = summonerSpell[index - 1];
-                            summonerSpell[index - 1] = summonerSpell[index - 2];
-                            summonerSpell[index - 2] = tmp;
-                        }
+                        playerteam = p.team;
+                        break;
                     }
-
-                    championName.Add(p.championName);
                 }
+                level.Clear();
+                summonerName.Clear();
+                championName.Clear();
+                int index = 0;
+                foreach (Player p in playerlist.Player)
+                {
+                    if (p.team != playerteam)
+                    {
+                        level.Add((int)Convert.ToSingle(p.level));
+                        summonerName.Add(p.summonerName);
+                        summonerSpell[index++] = p.summonerSpells.summonerSpellOne.rawDisplayName.Split('_')[2];
+                        summonerSpell[index++] = p.summonerSpells.summonerSpellTwo.rawDisplayName.Split('_')[2];
+
+                        if (FlashPos != 0)
+                        {
+                            if (summonerSpell[index - FlashPos] == "SummonerFlash")
+                            {
+                                var tmp = summonerSpell[index - 1];
+                                summonerSpell[index - 1] = summonerSpell[index - 2];
+                                summonerSpell[index - 2] = tmp;
+                            }
+                        }
+
+                        championName.Add(p.championName);
+                    }
+                }
+                for (int i = 0; i < 10; i++)
+                {
+                    SpellTotalTime[i] = Dic[summonerSpell[i]].SummonerCD;
+                }
+                await LoadPic();
+                IsSync = true;
             }
-            for(int i = 0; i < 10; i++)
+            catch (Exception e)
             {
-                SpellTotalTime[i] = Dic[summonerSpell[i]].SummonerCD;
-            }
-            await LoadPic();
-            IsSync = true;
-            }
+                Log.error("Cannot get data from client!" + e);
+            } 
+        }
 
         private async Task LoadPic()     
         {

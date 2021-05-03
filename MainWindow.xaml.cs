@@ -35,9 +35,9 @@ namespace SpellTracker
             {
                 json = JsonConvert.DeserializeObject<ConfigJson>(System.IO.File.ReadAllText(@"config.json"));
             }
-            catch
+            catch (Exception ex) 
             {
-                Log.error("Open json failed!");
+                Log.error("Open json failed!" + ex);
                 ValidationText.Text = "读取config文件失败！";
             }
 
@@ -65,9 +65,9 @@ namespace SpellTracker
                 Valid = true;
                 ValidationText.Text = "初始化完成！";
             }
-            catch
+            catch (Exception ex)
             {
-                Log.error("Hotkey init error!");
+                Log.error("Hotkey init error!"+ex);
             }
             VersionBlock.Text = "V"+ ConfigurationManager.AppSettings["sysversion"].ToString() + "   By MrDragon";
 
@@ -80,7 +80,7 @@ namespace SpellTracker
                 {
                     spellWindow.Type();
                 }
-                catch
+                catch (Exception ex)
                 {
                     ValidationText.Text = "请先启动软件！";
                 }
@@ -184,9 +184,9 @@ namespace SpellTracker
                 string output = Newtonsoft.Json.JsonConvert.SerializeObject(json, Newtonsoft.Json.Formatting.Indented);
                 System.IO.File.WriteAllText(@"config.json", output);
             }
-            catch
+            catch (Exception ex)
             {
-                Log.error("Register HotKey error!");
+                Log.error("Register HotKey error!" + ex);
             }
             HotKey.Text = ((Key)json.HotKey_Key).ToString();
             Setting.Focus();
@@ -202,12 +202,11 @@ namespace SpellTracker
                 FFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(0x34,0x9f,0xda));
                 DFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(0x34, 0x9f, 0xda));
             }
-            catch
+            catch (Exception ex)
             {
 
             }
         }
-
         private void DFlash_ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
             FFlash_ToggleButton.IsChecked = false;

@@ -72,9 +72,9 @@ namespace SpellTracker
                 {
                     Senddata("setname", System.Environment.GetEnvironmentVariable("ComputerName"));
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Log.error("Connect to type.exe err! ");
+                    Log.error("Connect to type.exe err! " + ex);
                 }
             }
             else
