@@ -89,11 +89,11 @@ namespace SpellTracker
             RP.FlashPos = this.FlashPos;
             await RP.GetSpells();
             Log.debug("new RiotParse successfully");
-            RP.SpellImg[0] = SpellImage00; RP.SpellImg[1] = SpellImage01;
-            RP.SpellImg[2] = SpellImage10; RP.SpellImg[3] = SpellImage11;
-            RP.SpellImg[4] = SpellImage20; RP.SpellImg[5] = SpellImage21;
-            RP.SpellImg[6] = SpellImage30; RP.SpellImg[7] = SpellImage31;
-            RP.SpellImg[8] = SpellImage40; RP.SpellImg[9] = SpellImage41;
+            RP.summoner[0].SpellImg[0] = SpellImage00; RP.summoner[0].SpellImg[1] = SpellImage01;
+            RP.summoner[1].SpellImg[0] = SpellImage10; RP.summoner[1].SpellImg[1] = SpellImage11;
+            RP.summoner[2].SpellImg[0] = SpellImage20; RP.summoner[2].SpellImg[1] = SpellImage21;
+            RP.summoner[3].SpellImg[0] = SpellImage30; RP.summoner[3].SpellImg[1] = SpellImage31;
+            RP.summoner[4].SpellImg[0] = SpellImage40; RP.summoner[4].SpellImg[1] = SpellImage41;
 
             timer.Elapsed += new System.Timers.ElapsedEventHandler(Timeout); //到达时间的时候执行事件；   
             timer.AutoReset = true;   //设置是执行一次（false）还是一直执行(true)；   
@@ -178,7 +178,7 @@ namespace SpellTracker
                 Log.Info("The program is not initialized. Don't click the img.");
                 return;
             }
-            await RP.TicTok(id);
+            await RP.TicTok(id/2,id%2);
         }
 
         #region MouseEvent

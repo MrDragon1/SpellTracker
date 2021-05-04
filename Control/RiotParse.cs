@@ -25,13 +25,29 @@ namespace SpellTracker.Control
     {
         public int GameTime;
         public string GameMode, PlayerName;
-        public List<int> level = new List<int>();
-        public List<string> summonerName = new List<string>();
-        public List<string> championName = new List<string>();
-        public string[] summonerSpell = new string[10];
-        public FadeImage[] SpellImg = new FadeImage[10];
-        public int[] SpellTime = new int[10];
-        public int[] SpellTotalTime = new int[10];
+
+        public class Summoner
+        {
+            public int level;
+            public List<int> items;
+            public int reduction;
+            public string summonerName;
+            public string championName;
+            public FadeImage[] SpellImg = new FadeImage[2];
+            public string[] summonerSpell = new string[2];
+            public int[] SpellTime = new int[2];
+            public int[] SpellTotalTime = new int[2];
+        }
+        public Summoner[] summoner = new Summoner[5];
+        //public List<int> level = new List<int>();
+        //public List<int> items = new List<int>();
+        //public List<int> reduction = new List<int>();
+        //public List<string> summonerName = new List<string>();
+        //public List<string> championName = new List<string>();
+        //public string[] summonerSpell = new string[10];
+        //public FadeImage[] SpellImg = new FadeImage[10];
+        //public int[] SpellTime = new int[10];
+        //public int[] SpellTotalTime = new int[10];
         public int shift = 10;
         public string playerteam = "";
         public bool IsSync = false;
@@ -50,6 +66,7 @@ namespace SpellTracker.Control
             //验证服务器证书回调自动验证
             System.Net.ServicePointManager.ServerCertificateValidationCallback =
                          new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
+            //for win7 
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Reset();
@@ -66,14 +83,19 @@ namespace SpellTracker.Control
 
         private void Reset()
         {
-            for (int i = 0; i < 10; i++)
+
+            for(int i = 0; i < 5; i++)
             {
-                SpellTime[i] = 0;
-                summonerSpell[i] = "SummonerFlash";
+                for (int j = 0; j < 2; j++)
+                {
+                    summoner[i].SpellTime[j] = 0;
+                    summoner[i].summonerSpell[j] = "SummonerFlash";
+                }
+                summoner[i].level = 0;
+                summoner[i].summonerName = "";
+                summoner[i].championName = "";
             }
-            level.Clear();
-            summonerName.Clear();
-            championName.Clear();
+            
         }
 
         protected bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
@@ -95,49 +117,51 @@ namespace SpellTracker.Control
             GameTime++;
             bool IfType = false;
             if (GameTime % 10 == 0) IfType = true;
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
-                
-                if (SpellTime[i] == 1)
+                for(int j = 0; j < 2; j++)
                 {
-                    IfType = true;
-                    SpellImg[i].IfFade = true;
-                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL);
+                    if (summoner[i].SpellTime[j] == 1)
+                    {
+                        IfType = true;
+                        summoner[i].SpellImg[j].IfFade = true;
+                        summoner[i].SpellImg[j].Source = await ImageCache.Instance.Get(Dic[summoner[i].summonerSpell[j]].ImageURL);
+                    }
+                    else if (summoner[i].SpellTime[j] > 0)
+                    {
+                        summoner[i].SpellImg[j].IfFade = false;
+                        double theta = ((double)summoner[i].SpellTotalTime[j] - (double)summoner[i].SpellTime[j]) / (double)summoner[i].SpellTotalTime[j];
+                        summoner[i].SpellImg[j].Source = await ImageCache.Instance.Get(Dic[summoner[i].summonerSpell[j]].ImageURL, (int)(theta * 360));
+                    }
+                    if (summoner[i].SpellTime[j] > 0) summoner[i].SpellTime[j]--;
                 }
-                else if (SpellTime[i] > 0)
-                {
-                    SpellImg[i].IfFade = false;
-                    double theta = ((double)SpellTotalTime[i] - (double)SpellTime[i]) / (double)SpellTotalTime[i];
-                    SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL, (int)(theta * 360));
-                }
-                if (SpellTime[i] > 0) SpellTime[i]--;
             }
             if (IfType) Type();
         }
 
-        public async Task TicTok(int id)
+        public async Task TicTok(int i,int j)
         {
-            
             if (IsSync)
             {
-                Log.Info("click " + id.ToString() + "  " + summonerSpell[id]);
-                if (SpellTime[id] == 0)
+    
+                Log.Info("click " + i.ToString() + "," + j.ToString() + "  " + summoner[i].summonerSpell[j]);
+                if (summoner[i].SpellTime[j] == 0)
                 {
-                    SpellTime[id] = GetSpellCD(id);
-                    SpellImg[id].IfFade = true;
-                    SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL, 0);
+                    summoner[i].SpellTime[j] = GetSpellCD(i,j);
+                    summoner[i].SpellImg[j].IfFade = true;
+                    summoner[i].SpellImg[j].Source = await ImageCache.Instance.Get(Dic[summoner[i].summonerSpell[j]].ImageURL, 0);
                     //(ImageSource)Application.Current.FindResource("img/CD" + summonerSpell[id] + ".png");
                 }
                 else
                 {
-                    SpellTime[id] = 0;
-                    SpellImg[id].IfFade = true;
-                    SpellImg[id].Source = await ImageCache.Instance.Get(Dic[summonerSpell[id]].ImageURL);
+                    summoner[i].SpellTime[j] = 0;
+                    summoner[i].SpellImg[j].IfFade = true;
+                    summoner[i].SpellImg[j].Source = await ImageCache.Instance.Get(Dic[summoner[i].summonerSpell[j]].ImageURL);
                 }
             }
             else
             {
-                Log.error("Invalid click on " + id.ToString() + "  " + summonerSpell[id]);
+                Log.error("Invalid click on " + i.ToString() + "," + j.ToString() + "  " + summoner[i].summonerSpell[j]);
             }
             
         }
@@ -232,35 +256,38 @@ namespace SpellTracker.Control
                         break;
                     }
                 }
-                level.Clear();
-                summonerName.Clear();
-                championName.Clear();
                 int index = 0;
                 foreach (Player p in playerlist.Player)
                 {
                     if (p.team != playerteam)
                     {
-                        level.Add((int)Convert.ToSingle(p.level));
-                        summonerName.Add(p.summonerName);
-                        summonerSpell[index++] = p.summonerSpells.summonerSpellOne.rawDisplayName.Split('_')[2];
-                        summonerSpell[index++] = p.summonerSpells.summonerSpellTwo.rawDisplayName.Split('_')[2];
-
+                        summoner[index].level = (int)Convert.ToSingle(p.level);
+                        summoner[index].reduction = 0;
+                        summoner[index].summonerName = p.summonerName;
+                        summoner[index].summonerSpell[0] = p.summonerSpells.summonerSpellOne.rawDisplayName.Split('_')[2];
+                        summoner[index].summonerSpell[1] = p.summonerSpells.summonerSpellTwo.rawDisplayName.Split('_')[2];
                         if (FlashPos != 0)
                         {
-                            if (summonerSpell[index - FlashPos] == "SummonerFlash")
+                            if (summoner[index].summonerSpell[FlashPos-1] == "SummonerFlash")
                             {
-                                var tmp = summonerSpell[index - 1];
-                                summonerSpell[index - 1] = summonerSpell[index - 2];
-                                summonerSpell[index - 2] = tmp;
+                                var tmp = summoner[index].summonerSpell[0];
+                                summoner[index].summonerSpell[0] = summoner[index].summonerSpell[1];
+                                summoner[index].summonerSpell[1] = tmp;
                             }
                         }
 
-                        championName.Add(p.championName);
+                        summoner[index].championName = p.championName;
+
+
                     }
                 }
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    SpellTotalTime[i] = Dic[summonerSpell[i]].SummonerCD;
+                    for(int j = 0;j<2;j++)
+                    {
+                        summoner[i].SpellTotalTime[j] = Dic[summoner[i].summonerSpell[j]].SummonerCD;
+                    }
+                    
                 }
                 await LoadPic();
                 IsSync = true;
@@ -275,7 +302,11 @@ namespace SpellTracker.Control
         {
             for (int i = 0; i < 10; i++)
             {
-                SpellImg[i].Source = await ImageCache.Instance.Get(Dic[summonerSpell[i]].ImageURL);
+                for(int j = 0;j<2;j++)
+                {
+                    summoner[i].SpellImg[j].Source = await ImageCache.Instance.Get(Dic[summoner[i].summonerSpell[j]].ImageURL);
+                }
+                
             }
         }
 
@@ -285,16 +316,20 @@ namespace SpellTracker.Control
             string[] pos = { "TOP", "TOP", "JUG", "JUG", "MID", "MID", "AD", "AD", "SUP", "SUP" };
             //Thread.Sleep(2000);
             string str = "";
-            for(int i = 0; i < 10; i++)
+            for(int i = 0; i < 5; i++)
             {
-                if (FlashOnly)
+                for(int j = 0;j<2;j++)
                 {
-                    if (SpellTime[i] > 0 && (summonerSpell[i] == "SummonerFlash" || summonerSpell[i] == "SummonerTeleport")) str += pos[i] + GetSpellShortName(summonerSpell[i]) + GetTimeInMinute(GameTime + SpellTime[i]) + (" ");
+                    if (FlashOnly)
+                    {
+                        if (summoner[i].SpellTime[j] > 0 && (summoner[i].summonerSpell[j] == "SummonerFlash" || summoner[i].summonerSpell[j] == "SummonerTeleport")) str += pos[i] + GetSpellShortName(summoner[i].summonerSpell[j]) + GetTimeInMinute(GameTime + summoner[i].SpellTime[j]) + (" ");
+                    }
+                    else
+                    {
+                        if (summoner[i].SpellTime[j] > 0) str += pos[i] + GetSpellShortName(summoner[i].summonerSpell[j]) + GetTimeInMinute(GameTime + summoner[i].SpellTime[j]) + (" ");
+                    }
                 }
-                else
-                {
-                    if (SpellTime[i] > 0) str += pos[i] + GetSpellShortName(summonerSpell[i]) + GetTimeInMinute(GameTime + SpellTime[i]) + (" ");
-                }
+                
             }
            typestr = str;
         }
@@ -312,29 +347,30 @@ namespace SpellTracker.Control
             return t;
         }
 
-        private int GetSpellCD(int id)
+        private int GetSpellCD(int i,int j)
         {
-            string str = summonerSpell[id];
+            string str = summoner[i].summonerSpell[j];
             if (str == "SummonerTeleport")
             {
                 string Url = "https://127.0.0.1:2999/liveclientdata/playerlist";
                 string result = "{\n\"Player\": " + Get_UrlData(Url) + "\n}";
                 RootObject_Playerlist playerlist = JsonConvert.DeserializeObject<RootObject_Playerlist>(result);
-                level.Clear();
+                summoner[i].level = 0;
+                int tmp = 0;
                 foreach (Player p in playerlist.Player)
                 {
                     if (p.team != playerteam)
                     {
-                        level.Add((int)Convert.ToSingle(p.level));
+                        summoner[tmp].level = (int)Convert.ToSingle(p.level);
                     }
                 }
-                Log.Info("tp cd:" + (432 - 12 * level[id / 2] - shift).ToString());
-                SpellTotalTime[id] = 432 - 12 * level[id / 2] - shift;
-                return 432 - 12 * level[id / 2] - shift;
+                Log.Info("tp cd:" + (432 - 12 * summoner[i].level - shift).ToString());
+                summoner[i].SpellTotalTime[j] = 432 - 12 * summoner[i].level - shift;
+                return 432 - 12 * summoner[i].level - shift;
             }
             else
             {
-                return SpellTotalTime[id] - shift;
+                return summoner[i].SpellTotalTime[j] - shift;
             }
         }
     }

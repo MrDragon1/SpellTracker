@@ -17,6 +17,15 @@ namespace SpellTracker.Control
 
     public class Items
     {
+        public string canUse { get; set; }
+        public string consumable { get; set; }
+        public int count { get; set; }
+        public string displayName { get; set; }
+        public int itemID { get; set; }
+        public int price { get; set; }
+        public string rawDescription { get; set; }
+        public string rawDisplayName { get; set; }
+        public int slot { get; set; }
     }
 
     public class Keystone
