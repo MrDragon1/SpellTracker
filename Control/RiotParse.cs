@@ -37,6 +37,19 @@ namespace SpellTracker.Control
             public string[] summonerSpell = new string[2];
             public int[] SpellTime = new int[2];
             public int[] SpellTotalTime = new int[2];
+
+            public Summoner()
+            {
+                this.SpellImg = new FadeImage[2];
+                this.summonerSpell = new string[2];
+                this.SpellTime = new int[2];
+                this.SpellTotalTime = new int[2];
+                this.level = 0;
+                this.items = new List<int>();
+                this.reduction = 0;
+                this.championName = "";
+                this.summonerName = "";
+            }
         }
         public Summoner[] summoner = new Summoner[5];
         //public List<int> level = new List<int>();
@@ -69,6 +82,11 @@ namespace SpellTracker.Control
             //for win7 
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            summoner = new Summoner[5];
+            for(int i = 0; i < 5; i++)
+            {
+                summoner[i] = new Summoner();
+            }
             Reset();
         }
 
@@ -268,17 +286,15 @@ namespace SpellTracker.Control
                         summoner[index].summonerSpell[1] = p.summonerSpells.summonerSpellTwo.rawDisplayName.Split('_')[2];
                         if (FlashPos != 0)
                         {
-                            if (summoner[index].summonerSpell[FlashPos-1] == "SummonerFlash")
+                            if (summoner[index].summonerSpell[2-FlashPos] == "SummonerFlash")
                             {
                                 var tmp = summoner[index].summonerSpell[0];
                                 summoner[index].summonerSpell[0] = summoner[index].summonerSpell[1];
                                 summoner[index].summonerSpell[1] = tmp;
                             }
                         }
-
                         summoner[index].championName = p.championName;
-
-
+                        index++;
                     }
                 }
                 for (int i = 0; i < 5; i++)
@@ -300,7 +316,7 @@ namespace SpellTracker.Control
 
         private async Task LoadPic()     
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
                 for(int j = 0;j<2;j++)
                 {

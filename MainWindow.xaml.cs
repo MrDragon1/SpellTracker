@@ -34,6 +34,16 @@ namespace SpellTracker
             try
             {
                 json = JsonConvert.DeserializeObject<ConfigJson>(System.IO.File.ReadAllText(@"config.json"));
+                if(json.FlashPos == 1)
+                {
+                    DFlash_ToggleButton_Checked(null, null);
+                    DFlash_ToggleButton.IsChecked = true;
+                }
+                else if (json.FlashPos == 2)
+                {
+                    FFlash_ToggleButton_Checked(null, null);
+                    FFlash_ToggleButton.IsChecked = true;
+                }
             }
             catch (Exception ex) 
             {
@@ -91,13 +101,10 @@ namespace SpellTracker
         {
             if (Valid)
             {
-                int flashPos = 0;
-                if ((bool)DFlash_ToggleButton.IsChecked) flashPos = 1;
-                else if ((bool)FFlash_ToggleButton.IsChecked) flashPos = 2;
                 spellWindow = new SpellWindow(
                     (int)Slider_Shift.Value, (bool)FTOnly.IsChecked,
                     json.Win_width,json.Win_height,
-                    flashPos
+                    json.FlashPos
                     );
 
                 spellWindow.Show();
@@ -106,6 +113,15 @@ namespace SpellTracker
                 FFlash_ToggleButton.IsEnabled = false;
                 DefaultFlash_ToggleButton.IsEnabled = false;
                 DFlash_ToggleButton.IsEnabled = false;
+                try
+                {
+                    string output = Newtonsoft.Json.JsonConvert.SerializeObject(json, Newtonsoft.Json.Formatting.Indented);
+                    System.IO.File.WriteAllText(@"config.json", output);
+                }
+                catch (Exception ex)
+                {
+                    Log.error("Write config file error!" + ex);
+                }
             }
         }
 
@@ -196,6 +212,7 @@ namespace SpellTracker
         {
             try
             {
+                json.FlashPos = 0;
                 FFlash_ToggleButton.IsChecked = false;
                 DFlash_ToggleButton.IsChecked = false;
                 DefaultFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(24,234,243));
@@ -209,6 +226,7 @@ namespace SpellTracker
         }
         private void DFlash_ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
+            json.FlashPos = 1;
             FFlash_ToggleButton.IsChecked = false;
             DefaultFlash_ToggleButton.IsChecked = false;
             DFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(24, 234, 243));
@@ -218,6 +236,7 @@ namespace SpellTracker
 
         private void FFlash_ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
+            json.FlashPos = 2;
             DefaultFlash_ToggleButton.IsChecked = false;
             DFlash_ToggleButton.IsChecked = false;
             FFlash_ToggleButton.Background = new SolidColorBrush(Color.FromRgb(24, 234, 243));
@@ -231,6 +250,7 @@ namespace SpellTracker
         public uint HotKey_Key { get; set; }
         public bool FTOnly { get; set; }
         public int shift { get; set; }
+        public int FlashPos { get; set; }
         public int Win_width { get; set; }
         public int Win_height { get; set; }
     }
