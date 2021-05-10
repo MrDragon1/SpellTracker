@@ -8,6 +8,8 @@ using System.Configuration;
 
 //TODO:setting page too empty
 //TODO:竖向排列
+//TODO:直角框
+//TODO:技能急速影响
 namespace SpellTracker
 {
     /// <summary>
@@ -44,11 +46,13 @@ namespace SpellTracker
                     FFlash_ToggleButton_Checked(null, null);
                     FFlash_ToggleButton.IsChecked = true;
                 }
+                
             }
             catch (Exception ex) 
             {
                 Log.error("Open json failed!" + ex);
                 ValidationText.Text = "读取config文件失败！";
+                return;
             }
 
             /*init user config*/
@@ -63,7 +67,7 @@ namespace SpellTracker
                 }
                 else
                 {
-                    HotKey.Text = "点击设置快捷键";
+                    HotKey.Text = "未设置";
                     ValidationText.Text = "快捷键未设置！";
                 }
                 if(json.shift >= Slider_Shift.Minimum && json.shift <= Slider_Shift.Maximum)
@@ -71,7 +75,7 @@ namespace SpellTracker
                     Slider_Shift.Value = json.shift;
                 }
                 FTOnly.IsChecked = json.FTOnly;
-                
+                IfHorizon.IsChecked = json.IfHorizon;
                 Valid = true;
                 ValidationText.Text = "初始化完成！";
             }
@@ -101,18 +105,22 @@ namespace SpellTracker
         {
             if (Valid)
             {
+                json.IfHorizon = (bool)IfHorizon.IsChecked;
+                json.shift = (int)Slider_Shift.Value;
+                json.FTOnly = (bool)FTOnly.IsChecked;
                 spellWindow = new SpellWindow(
-                    (int)Slider_Shift.Value, (bool)FTOnly.IsChecked,
-                    json.Win_width,json.Win_height,
-                    json.FlashPos
+                    json.shift, json.FTOnly,
+                    json.Win_width, json.Win_height,
+                    json.FlashPos,
+                    json.IfHorizon
                     );
-
                 spellWindow.Show();
                 Slider_Shift.IsEnabled = false;
                 FTOnly.IsEnabled = false;
                 FFlash_ToggleButton.IsEnabled = false;
                 DefaultFlash_ToggleButton.IsEnabled = false;
                 DFlash_ToggleButton.IsEnabled = false;
+                IfHorizon.IsEnabled = false;
                 try
                 {
                     string output = Newtonsoft.Json.JsonConvert.SerializeObject(json, Newtonsoft.Json.Formatting.Indented);
@@ -136,12 +144,13 @@ namespace SpellTracker
                 FFlash_ToggleButton.IsEnabled = true;
                 DefaultFlash_ToggleButton.IsEnabled = true;
                 DFlash_ToggleButton.IsEnabled = true;
+                IfHorizon.IsEnabled = true;
             }
         }
 
         private void Window_Closing(object sender, EventArgs e)
         {
-
+            // ???
             if (!Slider_Shift.IsEnabled)
             {
                 spellWindow.Close();
@@ -249,6 +258,7 @@ namespace SpellTracker
         public uint HotKey_Mod { get; set; }
         public uint HotKey_Key { get; set; }
         public bool FTOnly { get; set; }
+        public bool IfHorizon { get; set; }
         public int shift { get; set; }
         public int FlashPos { get; set; }
         public int Win_width { get; set; }

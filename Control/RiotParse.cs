@@ -329,7 +329,7 @@ namespace SpellTracker.Control
         public void Type()
         {
             if (IsSync == false) return;
-            string[] pos = { "TOP", "TOP", "JUG", "JUG", "MID", "MID", "AD", "AD", "SUP", "SUP" };
+            string[] pos = { "TOP", "JUG", "MID", "AD", "SUP" };
             //Thread.Sleep(2000);
             string str = "";
             for(int i = 0; i < 5; i++)

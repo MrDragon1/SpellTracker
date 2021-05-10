@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpellTracker"
         mc:Ignorable="d"
-        Title="SpellWindow" Height="95" Width="236" Loaded="Main_Load"
+        Title="SpellWindow" Height="96" Width="214" Loaded="Main_Load"
         xmlns:controls="clr-namespace:SpellTracker.Control"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
          TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -21,34 +21,31 @@
     <Window.Background>
         <SolidColorBrush Opacity="0.01" Color="#000000"></SolidColorBrush>
     </Window.Background>
-    
-    <Viewbox Stretch="Fill">
-        <Canvas Width="672" Height="267">
-            <Grid Margin="0,0,0,0">
 
-                <Grid.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Grid.RenderTransform>
+    <Viewbox Stretch="Fill">
+        <Canvas x:Name="Canvas" Width="535" Height="240">
+            <Grid x:Name="Canvas_Grid" Width="535" Height="240">
 
                 <Button x:Name="InitButton" Visibility="Visible"
         Style="{StaticResource MaterialDesignRaisedButton}"
         materialDesign:ButtonAssist.CornerRadius="20"
-        ToolTip="点我启动确保已经进入游戏，不是客户端界面" Height="Auto" 
-                        Canvas.Left="135"
-                        Canvas.Top="79"
-                        Margin="135,79,103,79"
+        ToolTip="点我启动确保已经进入游戏，不是客户端界面" Height="113" 
+        HorizontalAlignment="Center" VerticalAlignment="Center"
                 Click="InitButton_Click">
-                    <TextBlock x:Name="InitButtonText"
-            Text="正在初始化 ..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="28" FontWeight="Bold" />
+                    <TextBlock x:Name="InitButtonText" TextWrapping="Wrap"
+            Text="正在初始化 ..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="28" FontWeight="Bold" Height="103" Width="101" />
                 </Button>
 
 
-                <Grid x:Name="SpellGrid" ShowGridLines="False" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" Height="238" VerticalAlignment="Bottom" Margin="5,0,-1,10">
+                <Grid x:Name="SpellGrid" ShowGridLines="False" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform X="0.9" Y="0.9"/>
+                        </TransformGroup>
+                    </Grid.RenderTransform>
 
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
@@ -97,11 +94,10 @@
 
                 </Grid>
 
-                <Border BorderBrush="#FFD6700A" BorderThickness="5" HorizontalAlignment="Left" Height="267" Margin="0,0,0,0" VerticalAlignment="Top" Width="672" CornerRadius="20"/>
+                <Border BorderBrush="#FFD6700A" BorderThickness="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="20"/>
 
             </Grid>
         </Canvas>
     </Viewbox>
-    
-    
+
 </Window>

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using SpellTracker.Control;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Windows.Controls;
 
 namespace SpellTracker
 {
@@ -22,20 +23,32 @@ namespace SpellTracker
         Process process = new Process();
         public RiotParse RP;
         public bool IsInit = false;
+        public bool IfHorizon = true;
         public System.Timers.Timer timer = new System.Timers.Timer(1000);
         public int shift;
         public bool FlashOnly;
         public int FlashPos;
-        public SpellWindow(int shift = 10,bool FlashOnly = true,int width = 236,int height = 95,int flashPos = 0)
+        public SpellWindow(int shift = 10,bool FlashOnly = true,int width = 236,int height = 95,int flashPos = 0,bool IfHorizon=true)
         {
             InitializeComponent();
             SpellGrid.Visibility = Visibility.Hidden;
             InitButton.Visibility = Visibility.Visible;
             this.shift = shift;
             this.FlashOnly = FlashOnly;
-            this.Width = width;
-            this.Height = height;
+            this.IfHorizon = IfHorizon;
+            if (this.IfHorizon)
+            {
+                this.Width = width;
+                this.Height = height;
+            }
+            else
+            {
+                this.Width = height;
+                this.Height = width;
+            }
             this.FlashPos = flashPos>=0?flashPos:0;
+            
+            SetLayout();
         }
 
         private async void Main_Load(object sender, RoutedEventArgs e)
@@ -101,7 +114,67 @@ namespace SpellTracker
 
             timer.Start();
         }
+        private void SetLayout()
+        {
+            SpellGrid.RowDefinitions.Clear();
+            SpellGrid.ColumnDefinitions.Clear();
+            if (this.IfHorizon)
+            {
+                SpellGrid.RowDefinitions.Add(new RowDefinition());
+                SpellGrid.RowDefinitions.Add(new RowDefinition());
+                SpellGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                SpellGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                SpellGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                SpellGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                SpellGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                SpellImage00.SetValue(Grid.RowProperty, 0); SpellImage00.SetValue(Grid.ColumnProperty, 0);
+                SpellImage01.SetValue(Grid.RowProperty, 1); SpellImage01.SetValue(Grid.ColumnProperty, 0);
 
+                SpellImage10.SetValue(Grid.RowProperty, 0); SpellImage10.SetValue(Grid.ColumnProperty, 1);
+                SpellImage11.SetValue(Grid.RowProperty, 1); SpellImage11.SetValue(Grid.ColumnProperty, 1);
+
+                SpellImage20.SetValue(Grid.RowProperty, 0); SpellImage20.SetValue(Grid.ColumnProperty, 2);
+                SpellImage21.SetValue(Grid.RowProperty, 1); SpellImage21.SetValue(Grid.ColumnProperty, 2);
+
+                SpellImage30.SetValue(Grid.RowProperty, 0); SpellImage30.SetValue(Grid.ColumnProperty, 3);
+                SpellImage31.SetValue(Grid.RowProperty, 1); SpellImage31.SetValue(Grid.ColumnProperty, 3);
+
+                SpellImage40.SetValue(Grid.RowProperty, 0); SpellImage40.SetValue(Grid.ColumnProperty, 4);
+                SpellImage41.SetValue(Grid.RowProperty, 1); SpellImage41.SetValue(Grid.ColumnProperty, 4);
+
+                Canvas_Grid.Height = Canvas.Height = 240;
+                Canvas_Grid.Width = Canvas.Width = 600;
+            }
+            else
+            {
+                SpellGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                SpellGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                SpellGrid.RowDefinitions.Add(new RowDefinition());
+                SpellGrid.RowDefinitions.Add(new RowDefinition());
+                SpellGrid.RowDefinitions.Add(new RowDefinition());
+                SpellGrid.RowDefinitions.Add(new RowDefinition());
+                SpellGrid.RowDefinitions.Add(new RowDefinition());
+
+                SpellImage00.SetValue(Grid.RowProperty, 0); SpellImage00.SetValue(Grid.ColumnProperty, 0);
+                SpellImage01.SetValue(Grid.RowProperty, 0); SpellImage01.SetValue(Grid.ColumnProperty, 1);
+
+                SpellImage10.SetValue(Grid.RowProperty, 1); SpellImage10.SetValue(Grid.ColumnProperty, 0);
+                SpellImage11.SetValue(Grid.RowProperty, 1); SpellImage11.SetValue(Grid.ColumnProperty, 1);
+
+                SpellImage20.SetValue(Grid.RowProperty, 2); SpellImage20.SetValue(Grid.ColumnProperty, 0);
+                SpellImage21.SetValue(Grid.RowProperty, 2); SpellImage21.SetValue(Grid.ColumnProperty, 1);
+
+                SpellImage30.SetValue(Grid.RowProperty, 3); SpellImage30.SetValue(Grid.ColumnProperty, 0);
+                SpellImage31.SetValue(Grid.RowProperty, 3); SpellImage31.SetValue(Grid.ColumnProperty, 1);
+
+                SpellImage40.SetValue(Grid.RowProperty, 4); SpellImage40.SetValue(Grid.ColumnProperty, 0);
+                SpellImage41.SetValue(Grid.RowProperty, 4); SpellImage41.SetValue(Grid.ColumnProperty, 1);
+                
+                Canvas_Grid.Height = Canvas.Height = 550;
+                Canvas_Grid.Width = Canvas.Width = 240;
+
+            }
+        }
         public void Timeout(object source, System.Timers.ElapsedEventArgs e)
         {
             try
@@ -170,7 +243,6 @@ namespace SpellTracker
             Log.Info("---------------Stop SpellTracker-----------------");
         }
 
-
         public async Task ImageTic(int id)
         {
             if (!IsInit)
@@ -180,7 +252,7 @@ namespace SpellTracker
             }
             await RP.TicTok(id/2,id%2);
         }
-
+        
         #region MouseEvent
 
         private void SpellImage00_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

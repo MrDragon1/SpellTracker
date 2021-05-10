@@ -159,6 +159,17 @@
                     Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
                 <TextBlock Text="只发闪现和传送cd" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
 
+
+                <ToggleButton x:Name="IfHorizon" Grid.Column="1" Grid.Row="2"
+              Style="{StaticResource MaterialDesignSwitchToggleButton}"
+              ToolTip="MaterialDesignSwitchToggleButton"
+              IsChecked="True" RenderTransformOrigin="0.5,0.5" 
+                    Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                <TextBlock Text="水平布局" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="50,0,0,0"/>
+
+
+
+
                 <Slider x:Name="Slider_Shift" Grid.Column="1" Grid.Row="1" BorderThickness="4"
               TickFrequency="1"
               Orientation="Horizontal" 
@@ -189,7 +200,7 @@
                          Text="快捷键：" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" 
                            Foreground="White" FontWeight="Bold" />
                     <TextBox x:Name="HotKey" Grid.Row="0" Grid.Column="0" Margin="90,0,0,0"
-                         Text="test" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" 
+                         Text="未设置" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" 
                            Foreground="White" 
                          KeyDown="HotKey_KeyDown" MinWidth="70" />
 
